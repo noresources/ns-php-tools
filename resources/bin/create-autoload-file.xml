@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prg:program version="2.0" xmlns:prg="http://xsd.nore.fr/program" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<prg:name>create-autoload-file</prg:name>
+	<prg:author>Renaud Guillard</prg:author>
+	<prg:version>1.0</prg:version>
+	<prg:license />
+	<prg:copyright>Copyright © 2014 Renaud Guillard</prg:copyright>
+	<prg:documentation>
+		<prg:details>Create a PHP file containing a
+			spl_autoload_register that loads PHP classes
+			defined in a given directory tree
+		</prg:details>
+	</prg:documentation>
+	<prg:options>
+		<prg:argument required="true">
+			<prg:databinding>
+				<prg:variable>outputFile</prg:variable>
+			</prg:databinding>
+			<prg:documentation>
+				<prg:abstract>Output PHP file</prg:abstract>
+			</prg:documentation>
+			<prg:names>
+				<prg:long>output</prg:long>
+				<prg:short>o</prg:short>
+			</prg:names>
+			<prg:type>
+				<prg:path>
+					<prg:kinds>
+						<prg:file />
+					</prg:kinds>
+					<prg:patterns>
+						<prg:pattern>
+							<prg:name>PHP file</prg:name>
+							<prg:rules>
+								<prg:rule>
+									<prg:endWith>.php</prg:endWith>
+								</prg:rule>
+							</prg:rules>
+						</prg:pattern>
+					</prg:patterns>
+				</prg:path>
+			</prg:type>
+		</prg:argument>
+		<prg:argument>
+			<prg:databinding>
+				<prg:variable>functionName</prg:variable>
+			</prg:databinding>
+			<prg:documentation>
+				<prg:abstract>Autoload function name</prg:abstract>
+				<prg:details>If this parameter is not provided, a random name will be used</prg:details>
+			</prg:documentation>
+			<prg:names>
+				<prg:long>function-name</prg:long>
+				<prg:long>name</prg:long>
+				<prg:short>n</prg:short>
+			</prg:names>
+		</prg:argument>
+		<prg:argument>
+			<prg:databinding>
+				<prg:variable>includeExtension</prg:variable>
+			</prg:databinding>
+			<prg:default>inc.php</prg:default>
+			<prg:documentation>
+				<prg:abstract>Use include_once() for file with this extension</prg:abstract>
+				<prg:details>
+					By default, require_once() is used to load files. If the extension of the
+					processed file match the given pattern, include_once will be used instead
+					<prg:endl />
+					If the given extension is empty, require_once() will always be used.
+				</prg:details>
+			</prg:documentation>
+			<prg:names>
+				<prg:long>include-extension</prg:long>
+			</prg:names>
+		</prg:argument>
+		<prg:switch>
+			<prg:databinding>
+				<prg:variable>displayHelp</prg:variable>
+			</prg:databinding>
+			<prg:documentation>
+				<prg:abstract>Display help</prg:abstract>
+			</prg:documentation>
+			<prg:names>
+				<prg:long>help</prg:long>
+			</prg:names>
+		</prg:switch>
+	</prg:options>
+	<prg:values>
+		<prg:other>
+			<prg:documentation>
+				<prg:abstract>Directory trees</prg:abstract>
+				<prg:details>One or more directories to look for PHP autoloadable objects</prg:details>
+			</prg:documentation>
+			<prg:type>
+				<prg:path exist="true">
+					<prg:kinds>
+						<prg:folder />
+						<prg:file />
+					</prg:kinds>
+				</prg:path>
+			</prg:type>
+		</prg:other>
+	</prg:values>
+</prg:program>

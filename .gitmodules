@@ -1,0 +1,3 @@
+[submodule "resources/ns-xml"]
+	path = resources/ns-xml
+	url = https://github.com/noresources/ns-xml.git
