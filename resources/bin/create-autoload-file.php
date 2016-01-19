@@ -63,7 +63,7 @@ namespace
 			
 			$itemPath = $treeNode . '/' . $item;
 			
-			echo ($itemPath . "\n");
+			echo ($itemPath . PHP_EOL);
 			if (is_dir($itemPath))
 			{
 				processTree($classArray, $outputFile, $treeRoot, $itemPath);
@@ -104,7 +104,12 @@ namespace
 			{
 				
 				$class_name = $tokens [$i] [1];
-				$classArray [$context . '\\' . $class_name] = $relativeToOutput;
+				if (strlen($context))
+				{
+					$class_name = $context . '\\' . $class_name;
+				}
+				
+				$classArray [$class_name] = $relativeToOutput;
 			}
 		}
 	}
@@ -124,7 +129,7 @@ namespace
 		
 		foreach ($result->getMessages() as $m)
 		{
-			echo (' - ' . $m . "\n");
+			echo (' - ' . $m . PHP_EOL);
 		}
 		
 		$usage->format = Parser\UsageFormat::SHORT_TEXT;
@@ -142,14 +147,14 @@ namespace
 	
 	if (!is_dir($outputDirectory) && !mkdir($outputDirectory, 0777, true))
 	{
-		echo ('Failed to create ' . $result->outputFile . "\n");
+		echo ('Failed to create ' . $result->outputFile . PHP_EOL);
 		exit(2);
 	}
 	
+	$classArray = array ();
 	foreach ($result as $path)
 	{
 		echo $path . "\n";
-		$classArray = array ();
 		if (is_file($path))
 		{
 			$path = realpath($path);

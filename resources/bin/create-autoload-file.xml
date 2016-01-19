@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<prg:program version="2.0" xmlns:prg="http://xsd.nore.fr/program" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<prg:program version="2.0" xmlns:prg="http://xsd.nore.fr/program" xmlns:xml="http://www.w3.org/XML/1998/namespace">
 	<prg:name>create-autoload-file</prg:name>
 	<prg:author>Renaud Guillard</prg:author>
 	<prg:version>1.0</prg:version>
