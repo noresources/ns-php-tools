@@ -2968,7 +2968,7 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 	{
 		parent::__construct("create-autoload-file");
 		
-		$this->details = "Create a PHP file containing a spl_autoload_register that loads PHP classes defined in a given directory tree";
+		$this->details = 'Create a PHP file containing a spl_autoload_register that loads PHP classes defined in a given directory tree';
 		
 		// prg:argument outputFile
 		$G_1_output = new \Parser\ArgumentOptionInfo("outputFile", array('output', 'o'), (0 | \Parser\ItemInfo::REQUIRED));
@@ -3003,9 +3003,9 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 		$G_1_ = $this->appendPositionalArgument( new \Parser\PositionalArgumentInfo(-1, \Parser\ArgumentType::PATH, (0)));
 		$G_1_->validators[] = new \Parser\PathValueValidator(0 | \Parser\PathValueValidator::EXISTS | \Parser\PathValueValidator::TYPE_FILE | \Parser\PathValueValidator::TYPE_FOLDER);
 		
-		$G_1_->abstract = "Directory trees";
+		$G_1_->abstract = 'Directory trees';
 		
-		$G_1_->details = "One or more directories to look for PHP autoloadable objects";
+		$G_1_->details = 'One or more directories to look for PHP autoloadable objects';
 	}
 }
 
