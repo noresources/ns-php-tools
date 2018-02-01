@@ -4,7 +4,7 @@
 	<prg:author>Renaud Guillard</prg:author>
 	<prg:version>1.0</prg:version>
 	<prg:license />
-	<prg:copyright>Copyright © 2014 Renaud Guillard</prg:copyright>
+	<prg:copyright>Copyright © 2014-2018 Renaud Guillard</prg:copyright>
 	<prg:documentation>
 		<prg:details>Create a PHP file containing a
 			spl_autoload_register that loads PHP classes
