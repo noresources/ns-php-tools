@@ -1,0 +1,21 @@
+{
+	"name" : "noresources/ns-php-tools",
+	"description" : "Command line tools written in PHP",
+	"license" : "MIT",
+	"authors" : [{
+			"name" : "Renaud Guillard",
+			"email" : "dev@nore.fr",
+			"role" : "lead"
+		}
+	],
+	"support" : {
+		"issues" : "https://github.com/noresources/ns-php-tools/issues"
+	},
+	"require" : {
+		"php" : "^5.3"
+	},
+	"minimum-stability" : "dev",
+	"config" : {
+		"bin-dir" : "bin"
+	}
+}
