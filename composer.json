@@ -1,0 +1,25 @@
+{
+	"authors": [
+		{
+			"name": "Renaud Guillard",
+			"email": "dev@nore.fr",
+			"role": "lead"
+		}
+	],
+	"name": "noresources/ns-php-tools",
+	"require": {
+		"php": "^5.3"
+	},
+	"description": "Command line tools written in PHP",
+	"license": "MIT",
+	"minimum-stability": "dev",
+	"config": {
+		"bin-dir": "bin"
+	},
+	"bin": [
+		"bin/create-autoload-file.php"
+	],
+	"support": {
+		"issues": "https://github.com/noresources/ns-php-tools/issues"
+	}
+}
