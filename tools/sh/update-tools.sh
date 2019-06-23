@@ -16,12 +16,12 @@ do
 	path="${path%/}"
 	[ -z "${path}" ] && path='.'
 
-	${rootPath}/resources/ns-xml/ns/sh/build-php.sh \
+	${rootPath}/vendor/noresources/ns-xml/ns/sh/build-php.sh \
 		--parser-ns 'Parser' \
 		--program-ns 'Program' \
 		-x "${xml}" \
 		-m "${xml%xml}php" \
-		-o "${rootPath}/bin/${path}/${file%xml}php"
+		-o "${rootPath}/bin/${path}/${file%.xml}"
 done << EOF
 $(find "${binResourceBasePath}" -type f -name '*.xml')
 EOF

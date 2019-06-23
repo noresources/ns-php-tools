@@ -16,7 +16,6 @@ class OptionName
 	const ANY = 3;
 
 	/**
-	 *
 	 * @param string $name Option name
 	 */
 	public function __construct($name)
@@ -30,7 +29,6 @@ class OptionName
 	}
 
 	/**
-	 *
 	 * @return boolean @c true if the option name is a short name (single character)
 	 */
 	public function isShort()
@@ -39,7 +37,6 @@ class OptionName
 	}
 
 	/**
-	 *
 	 * @return string Option name (without leading dash(es))
 	 */
 	public function name()
@@ -48,7 +45,6 @@ class OptionName
 	}
 
 	/**
-	 *
 	 * @return string Option name as it appears on the command line
 	 */
 	public function cliName()
@@ -57,12 +53,11 @@ class OptionName
 		{
 			return '-' . $this->m_name;
 		}
-		
+
 		return '--' . $this->m_name;
 	}
 
 	/**
-	 *
 	 * @var string
 	 */
 	private $m_name;
@@ -93,15 +88,14 @@ class OptionNameList extends \ArrayObject
 				// throw
 			}
 		}
-		
+
 		$this->uksort(array (
 				get_class($this),
-				'keySort' 
+				'keySort'
 		));
 	}
 
 	/**
-	 *
 	 * @param string $k
 	 * @param string $v
 	 */
@@ -110,12 +104,11 @@ class OptionNameList extends \ArrayObject
 		parent::offsetSet($k, $v);
 		$this->uksort(array (
 				get_class($this),
-				'keySort' 
+				'keySort'
 		));
 	}
 
 	/**
-	 *
 	 * @param function $func
 	 * @param array $argv
 	 * @throws BadMethodCallException
@@ -126,33 +119,31 @@ class OptionNameList extends \ArrayObject
 		{
 			throw new BadMethodCallException(__CLASS__ . '->' . $func);
 		}
-		
+
 		return call_user_func_array($func, array_merge(array (
-				$this->getArrayCopy() 
+				$this->getArrayCopy()
 		), $argv));
 	}
 
 	/**
-	 *
 	 * @return array Subset of names which only contains single-letter option names
 	 */
 	public function getShortOptionNames()
 	{
 		return array_filter($this->getArrayCopy(), array (
 				get_class($this),
-				'filterShort' 
+				'filterShort'
 		));
 	}
 
 	/**
-	 *
 	 * @return array
 	 */
 	public function getLongOptionNames()
 	{
 		return array_filter($this->getArrayCopy(), array (
 				get_class($this),
-				'filterLong' 
+				'filterLong'
 		));
 	}
 
@@ -171,7 +162,7 @@ class OptionNameList extends \ArrayObject
 			list ( $k, $v ) = each($a);
 			return $v;
 		}
-		
+
 		$other = null;
 		foreach ($this as $k => $v)
 		{
@@ -183,13 +174,13 @@ class OptionNameList extends \ArrayObject
 			{
 				return $v;
 			}
-			
+
 			if (!$other)
 			{
 				$other = $v;
 			}
 		}
-		
+
 		return ($strict) ? null : $v;
 	}
 
@@ -202,7 +193,7 @@ class OptionNameList extends \ArrayObject
 	{
 		$la = strlen($a);
 		$lb = strlen($b);
-		
+
 		if (($la < $lb) && ($la == 1))
 		{
 			return -1;
@@ -211,7 +202,7 @@ class OptionNameList extends \ArrayObject
 		{
 			return 1;
 		}
-		
+
 		return strcmp($a, $b);
 	}
 
@@ -242,12 +233,12 @@ class Text
 	public static function implode($list, $separator = ', ', $lastSeparator = ' or ')
 	{
 		$c = count($list);
-		
+
 		if ($c <= 1)
 		{
 			return implode($separator, $list);
 		}
-		
+
 		$last = array_pop($list);
 		return implode($separator, $list) . $lastSeparator . $last;
 	}
@@ -294,20 +285,20 @@ class TextWrap
 	public function wrap($text, $mode = self::OFFSET_NONE, $level = 0)
 	{
 		$indentation = str_repeat($this->indentString, $level);
-		
+
 		$firstIndent = $indentation . (($mode & self::OFFSET_FIRST) ? $this->indentString : '');
 		$otherIndent = $indentation . (($mode & self::OFFSET_OTHER) ? $this->indentString : '');
-		
+
 		$text = $firstIndent . $text;
-		
+
 		$len = ($this->lineLength - strlen($otherIndent));
 		$result = wordwrap($text, (($len > 0) ? $len : 1), $this->endOfLineString);
 		if (($mode & self::OFFSET_OTHER) || strlen($indentation))
 		{
-			
+
 			$result = implode($this->endOfLineString . $otherIndent, explode($this->endOfLineString, $result));
 		}
-		
+
 		return $result;
 	}
 }
@@ -337,19 +328,18 @@ abstract class ValueValidator
 {
 
 	/**
-	 *
 	 * @param ParserState $state Parser state
 	 * @param ProgramResult $result Program result instance
 	 * @param mixed $element Option properties or positional argument index
 	 * @param mixed $value Value to validate
 	 */
-	abstract function validate(ParserState &$state, ProgramResult &$result, &$element, $value);
+	abstract function validate(ParserState $state, ProgramResult $result, $element, $value);
 
 	/**
 	 * Additional usage information
 	 * @return string
 	 */
-	abstract function usage(UsageFormat &$usage);
+	abstract function usage(UsageFormat $usage);
 
 	/**
 	 * Add 'Invalid argument' error message
@@ -358,7 +348,7 @@ abstract class ValueValidator
 	 * @param unknown_type $element
 	 * @param UsageFormat $usage
 	 */
-	protected function appendDefaultError(ParserState &$state, ProgramResult &$result, &$element, UsageFormat &$usage)
+	protected function appendDefaultError(ParserState $state, ProgramResult $result, $element, UsageFormat $usage)
 	{
 		if (is_object($element) && ($element instanceof OptionNameBinding))
 		{
@@ -390,7 +380,7 @@ class PathValueValidator extends ValueValidator
 		$this->flags = $flags;
 	}
 
-	public function validate(ParserState &$state, ProgramResult &$result, &$element, $value)
+	public function validate(ParserState $state, ProgramResult $result, $element, $value)
 	{
 		$passed = true;
 		if ($this->flags & self::EXISTS)
@@ -399,18 +389,18 @@ class PathValueValidator extends ValueValidator
 			{
 				$passed = false;
 			}
-			
+
 			if (($this->flags & self::ACCESS_WRITE) && !is_writable($value))
 			{
 				$passed = false;
 			}
-			
+
 			if (($this->flags & self::ACCESS_EXECUTE) && !is_executable($value))
 			{
 				$passsed = false;
 			}
 		}
-		
+
 		if (file_exists($value))
 		{
 			$types = ($this->flags & self::TYPE_ALL);
@@ -429,16 +419,15 @@ class PathValueValidator extends ValueValidator
 				{
 					$typeFound = true;
 				}
-				
+
 				if (!$typeFound)
 				{
 					$passed = False;
 				}
 			}
 		}
-		
+
 		/**
-		 *
 		 * @todo a more customized error message ?
 		 */
 		if (!$passed)
@@ -446,58 +435,58 @@ class PathValueValidator extends ValueValidator
 			$usage = new UsageFormat();
 			$this->appendDefaultError($state, $result, $element, $usage);
 		}
-		
+
 		return $passed;
 	}
 
-	public function usage(UsageFormat &$usage)
+	public function usage(UsageFormat $usage)
 	{
 		$text = '';
 		$eol = $usage->textWrap->endOfLineString;
-		
+
 		$types = ($this->flags & self::TYPE_ALL);
-		
+
 		if (!(($types == 0) || ($types == self::TYPE_ALL)))
 		{
 			$types = array (
 					self::TYPE_FILE => 'file',
 					self::TYPE_FOLDER => 'folder',
-					self::TYPE_SYMLINK => 'symbolic link' 
+					self::TYPE_SYMLINK => 'symbolic link'
 			);
 			$names = array ();
-			
+
 			foreach ($types as $t => $name)
 			{
 				if (($t & $this->flags) == $t)
 				{
-					$names [] = $name;
+					$names[] = $name;
 				}
 			}
-			
+
 			$text .= 'Expected file type' . ((count($names) > 1) ? 's' : '') . ': ';
 			$text .= Text::implode($names, ', ', ' or ');
 		}
-		
+
 		$access = ($this->flags & (self::ACCESS_READ | self::ACCESS_WRITE | self::ACCESS_EXECUTE));
 		if ($access)
 		{
 			$access = array (
 					self::ACCESS_READ => 'readable',
 					self::ACCESS_WRITE => 'writable',
-					self::ACCESS_EXECUTE => 'executable' 
+					self::ACCESS_EXECUTE => 'executable'
 			);
 			$names = array ();
 			foreach ($access as $a => $name)
 			{
 				if (($a & $this->flags) == $a)
 				{
-					$names [] = $name;
+					$names[] = $name;
 				}
 			}
-			
+
 			$text .= (strlen($text) ? $eol : '') . 'Path argument must be ' . Text::implode($names, ', ', ' and ');
 		}
-		
+
 		return $text;
 	}
 
@@ -516,26 +505,25 @@ class NumberValueValidator extends ValueValidator
 		$this->maxValue = $maxValue;
 	}
 
-	public function validate(ParserState &$state, ProgramResult &$result, &$element, $value)
+	public function validate(ParserState $state, ProgramResult $result, $element, $value)
 	{
 		$passed = true;
 		if (!is_numeric($value))
 		{
 			$passed = false;
 		}
-		
+
 		if ($passed && ($this->minValue !== null) && ($value < $this->minValue))
 		{
 			$passed = false;
 		}
-		
+
 		if ($passed && ($this->maxValue !== null) && ($value > $this->maxValue))
 		{
 			$passed = false;
 		}
-		
+
 		/**
-		 *
 		 * @todo a more customized error message ?
 		 */
 		if (!$passed)
@@ -543,11 +531,11 @@ class NumberValueValidator extends ValueValidator
 			$usage = new UsageFormat();
 			$this->appendDefaultError($state, $result, $element, $usage);
 		}
-		
+
 		return $passed;
 	}
 
-	public function usage(UsageFormat &$usage)
+	public function usage(UsageFormat $usage)
 	{
 		$text = 'Argument value must be a number';
 		if ($this->minValue !== null)
@@ -565,7 +553,7 @@ class NumberValueValidator extends ValueValidator
 		{
 			$text .= ' lesser or equal than ' . $this->maxValue;
 		}
-		
+
 		return $text;
 	}
 
@@ -586,13 +574,13 @@ class EnumerationValueValidator extends ValueValidator
 		$this->flags = $flags;
 	}
 
-	public function validate(ParserState &$state, ProgramResult &$result, &$element, $value)
+	public function validate(ParserState $state, ProgramResult $result, $element, $value)
 	{
 		if (!($this->flags & self::RESTRICT))
 		{
 			return true;
 		}
-		
+
 		foreach ($this->values as $v)
 		{
 			if ($v == $value)
@@ -600,14 +588,14 @@ class EnumerationValueValidator extends ValueValidator
 				return true;
 			}
 		}
-		
+
 		$usage = new UsageFormat();
 		$this->appendDefaultError($state, $result, $element, $usage);
-		
+
 		return false;
 	}
 
-	public function usage(UsageFormat &$usage)
+	public function usage(UsageFormat $usage)
 	{
 		return 'Argument value ' . (($this->flags & self::RESTRICT) ? 'must' : 'can') . ' be ' . Text::implode($this->values, ', ', ' or ');
 	}
@@ -629,19 +617,16 @@ class ItemInfo
 	const REQUIRED = 1;
 
 	/**
-	 *
 	 * @var string
 	 */
 	public $abstract;
 
 	/**
-	 *
 	 * @var string
 	 */
 	public $details;
 
 	/**
-	 *
 	 * @param string $abstract Short description
 	 * @param string $details Detailed description
 	 */
@@ -654,7 +639,6 @@ class ItemInfo
 
 // Option infos
 
-
 /**
  * Describe a program option
  */
@@ -662,19 +646,16 @@ class OptionInfo extends ItemInfo
 {
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $optionFlags;
 
 	/**
-	 *
 	 * @var string
 	 */
 	public $variableName;
 
 	/**
-	 *
 	 * @var ItemInfo @c null if the option is a top-level option
 	 */
 	public $parent;
@@ -696,7 +677,6 @@ class OptionInfo extends ItemInfo
 	}
 
 	/**
-	 *
 	 * @return OptionMameList
 	 */
 	public function getOptionNames()
@@ -705,7 +685,6 @@ class OptionInfo extends ItemInfo
 	}
 
 	/**
-	 *
 	 * @param mixed $nameListOrArray
 	 */
 	public function setOptionNames($nameListOrArray)
@@ -733,18 +712,17 @@ class OptionInfo extends ItemInfo
 					$key .= $index;
 					break;
 				}
-				
+
 				$index++;
 			}
-			
+
 			$key = $this->parent->getKey() . $key;
 		}
-		
+
 		return $key;
 	}
 
 	/**
-	 *
 	 * @var OptionNameList
 	 */
 	private $optionNames;
@@ -788,7 +766,7 @@ class ArgumentType
 			case self::NUMBER:
 				return 'number';
 		}
-		
+
 		return '?';
 	}
 }
@@ -800,13 +778,11 @@ class ArgumentOptionInfo extends OptionInfo
 {
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $argumentType;
 
 	/**
-	 *
 	 * @var mixed
 	 */
 	public $defaultValue;
@@ -826,19 +802,16 @@ class MultiArgumentOptionInfo extends OptionInfo
 {
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $argumentsType;
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $minArgumentCount;
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $maxArgumentCount;
@@ -866,7 +839,6 @@ class OptionContainerOptionInfo extends OptionInfo
 	}
 
 	/**
-	 *
 	 * @return array OptionInfo array
 	 */
 	function getOptions()
@@ -875,30 +847,29 @@ class OptionContainerOptionInfo extends OptionInfo
 	}
 
 	/**
-	 *
 	 * @param OptionInfo $option
 	 */
-	public function appendOption(OptionInfo &$option)
+	public function appendOption(OptionInfo $option)
 	{
-		$this->options [] = $option;
+		$this->options[] = $option;
 		$option->parent = $this;
 	}
 
 	public function getOptionNameListString()
 	{
 		$names = array ();
-		foreach ($this->options as &$option)
+		foreach ($this->options as $option)
 		{
 			if ($option instanceof GroupOptionInfo)
 			{
-				$names [] = '(' . $option->getOptionNameListString() . ')';
+				$names[] = '(' . $option->getOptionNameListString() . ')';
 			}
 			else
 			{
-				$names [] = $option->getOptionNames()->getFirstOptionName(OptionName::LONG, false)->cliName();
+				$names[] = $option->getOptionNames()->getFirstOptionName(OptionName::LONG, false)->cliName();
 			}
 		}
-		
+
 		return Text::implode($names, ', ', ' or ');
 	}
 
@@ -910,10 +881,10 @@ class OptionContainerOptionInfo extends OptionInfo
 			{
 				return self::sortRequiredOptionFirst($a, $b);
 			}
-			
+
 			return -1;
 		}
-		
+
 		return 1;
 	}
 
@@ -925,60 +896,60 @@ class OptionContainerOptionInfo extends OptionInfo
 			{
 				return 0;
 			}
-			
+
 			return -1;
 		}
-		
+
 		return 1;
 	}
 
 	protected function optionShortUsage($usage)
 	{
 		$text = '';
-		
+
 		// switch with short names, then others
 		$list = $this->flattenOptionTree();
 		usort($list, array (
 				get_class(),
-				'sortRequiredOptionFirst' 
+				'sortRequiredOptionFirst'
 		));
 		$groups = array (
 				array (),
-				array () 
+				array ()
 		);
-		foreach ($list as $k => &$option)
+		foreach ($list as $k => $option)
 		{
 			$firtShort = $option->getOptionNames()->getFirstOptionName(OptionName::SHORT, true);
 			if ($firtShort && ($option instanceof SwitchOptionInfo))
 			{
-				$groups [0] [] = $firtShort->name();
+				$groups[0][] = $firtShort->name();
 			}
 			else
 			{
 				$first = $option->getOptionNames()->getFirstOptionName();
 				if ($first)
 				{
-					$groups [1] [] = array (
+					$groups[1][] = array (
 							'option' => $option,
-							'name' => $first 
+							'name' => $first
 					);
 				}
 			}
 		}
-		
-		if (count($groups [0]))
+
+		if (count($groups[0]))
 		{
-			natsort($groups [0]);
-			$text .= '-' . implode('', $groups [0]);
+			natsort($groups[0]);
+			$text .= '-' . implode('', $groups[0]);
 		}
-		
-		foreach ($groups [1] as &$other)
+
+		foreach ($groups[1] as $other)
 		{
-			$option = $other ['option'];
-			$name = $other ['name'];
+			$option = $other['option'];
+			$name = $other['name'];
 			$required = ($option->optionFlags & ItemInfo::REQUIRED);
 			$optionText = $name->cliName();
-			
+
 			if ($option instanceof ArgumentOptionInfo)
 			{
 				$optionText .= '=<' . ArgumentType::usageName($option->argumentType) . '>';
@@ -987,15 +958,15 @@ class OptionContainerOptionInfo extends OptionInfo
 			{
 				$optionText .= '=<' . ArgumentType::usageName($option->argumentsType) . ' ...>';
 			}
-			
+
 			if (!$required && strlen($optionText))
 			{
 				$optionText = '[' . $optionText . ']';
 			}
-			
+
 			$text .= ((strlen($text) && strlen($optionText)) ? ' ' : '') . $optionText;
 		}
-		
+
 		return $text;
 	}
 
@@ -1003,65 +974,67 @@ class OptionContainerOptionInfo extends OptionInfo
 	{
 		$text = '';
 		$eol = $usage->textWrap->endOfLineString;
-		
-		foreach ($this->options as &$o)
+
+		foreach ($this->options as $o)
 		{
-			$subtext = '';
+			$optionTaxt = '';
+			$subOptionsText = '';
 			if (!($o instanceof GroupOptionInfo))
 			{
 				$names = array ();
-				
+
 				foreach ($o->getOptionNames() as $k => $name)
 				{
-					$names [] = $name->cliName();
+					$names[] = $name->cliName();
 				}
-				
-				$subtext = implode(', ', $names);
+
+				$optionTaxt = implode(', ', $names);
 			}
-			
+
 			if (($usage->format & UsageFormat::ABSTRACT_TEXT) && strlen($o->abstract))
 			{
-				$subtext .= (strlen($subtext) ? ': ' : '') . $o->abstract;
+				$optionTaxt .= (strlen($optionTaxt) ? ': ' : '') . $o->abstract;
 			}
-			
+
 			if (($usage->format & UsageFormat::DETAILED_TEXT) && strlen($o->details))
 			{
-				$subtext .= (strlen($subtext) ? $eol : '') . $o->details;
+				$optionTaxt .= (strlen($optionTaxt) ? $eol : '') . $o->details;
 			}
-			
-			if ($o instanceof GroupOptionInfo)
-			{
-				$subtext .= (strlen($subtext) ? $eol : '') . $o->optionUsage($usage, $level + 1);
-				if (strlen($subtext))
-				{
-					$text .= $subtext . $eol;
-				}
-			}
-			else
+
+			if (!($o instanceof GroupOptionInfo))
 			{
 				foreach ($o->validators as $v)
 				{
 					$vtext = $v->usage($usage);
 					if (strlen($vtext))
 					{
-						$subtext .= (strlen($subtext) ? $eol : '') . $vtext;
+						$optionTaxt .= (strlen($optionTaxt) ? $eol : '') . $vtext;
 					}
 				}
-				
-				if (strlen($subtext))
+			}
+
+			if (strlen($optionTaxt))
+			{
+				$text .= $usage->textWrap->wrap($optionTaxt, TextWrap::OFFSET_OTHER, $level) . $eol;
+			}
+			
+			if ($o instanceof GroupOptionInfo)
+			{
+				$subOptionsText = $o->optionUsage($usage, $level + 1);
+				if (strlen($subOptionsText))
 				{
-					$text .= $usage->textWrap->wrap($subtext, TextWrap::OFFSET_OTHER, $level) . $eol;
+					$text .= $subOptionsText;
 				}
 			}
 		}
-		
+
 		return $text;
 	}
 
 	protected function flattenOptionTree()
 	{
 		$list = array ();
-		foreach ($this->options as &$o)
+		foreach ($this->options as $o)
 		{
 			if ($o instanceof GroupOptionInfo)
 			{
@@ -1069,10 +1042,10 @@ class OptionContainerOptionInfo extends OptionInfo
 			}
 			else
 			{
-				$list [] = $o;
+				$list[] = $o;
 			}
 		}
-		
+
 		return $list;
 	}
 
@@ -1088,7 +1061,6 @@ class GroupOptionInfo extends OptionContainerOptionInfo
 	const TYPE_EXCLUSIVE = 1;
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $groupType;
@@ -1108,25 +1080,21 @@ class PositionalArgumentInfo extends ItemInfo
 {
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $positionalArgumentFlags;
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $argumentType;
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $maxArgumentCount;
 
 	/**
-	 *
 	 * @var array of validators
 	 */
 	public $validators;
@@ -1157,7 +1125,7 @@ class RootItemInfo extends OptionContainerOptionInfo
 
 	public function getPositionalArgument($index)
 	{
-		return $this->positionalArguments [$index];
+		return $this->positionalArguments[$index];
 	}
 
 	public function getPositionalArguments()
@@ -1165,14 +1133,42 @@ class RootItemInfo extends OptionContainerOptionInfo
 		return $this->positionalArguments;
 	}
 
-	public function &appendPositionalArgument(PositionalArgumentInfo &$paInfo)
+	public function &appendPositionalArgument(PositionalArgumentInfo $paInfo)
 	{
-		$this->positionalArguments [] = $paInfo;
+		$this->positionalArguments[] = $paInfo;
 		return $paInfo;
 	}
 
+	public function positionalArgumentsUsage($usage, $level = 0)
+	{
+		$number = 1;
+		$eol = $usage->textWrap->endOfLineString;
+		$text = '';
+		foreach ($this->positionalArguments as $pa)
+		{
+			$s = '#' . $number . '.';
+			if ($pa->abstract)
+			{
+				$s .= ' ' . $pa->abstract;
+			}
+
+			foreach ($pa->validators as $v)
+			{
+				$vtext = $v->usage($usage);
+				if (strlen($vtext))
+				{
+					$s .= $eol . $vtext . $eol;
+				}
+			}
+
+			$text .= $usage->textWrap->wrap($s, TextWrap::OFFSET_OTHER, $level) . $eol;
+			$number++;
+		}
+
+		return $text;
+	}
+
 	/**
-	 *
 	 * @var array of PositionalArgumentInfo
 	 */
 	protected $positionalArguments;
@@ -1185,13 +1181,11 @@ class SubcommandInfo extends RootItemInfo
 {
 
 	/**
-	 *
 	 * @var string
 	 */
 	public $name;
 
 	/**
-	 *
 	 * @var array of string
 	 */
 	public $aliases;
@@ -1204,13 +1198,12 @@ class SubcommandInfo extends RootItemInfo
 	}
 
 	/**
-	 *
 	 * @return array of names (name + aliases)
 	 */
 	public function getNames()
 	{
 		$n = array (
-				$this->name 
+				$this->name
 		);
 		return array_merge($n, $this->aliases);
 	}
@@ -1223,13 +1216,11 @@ class ProgramInfo extends RootItemInfo
 {
 
 	/**
-	 *
 	 * @var string Program name
 	 */
 	public $name;
 
 	/**
-	 *
 	 * @var array of SubcommandInfo
 	 */
 	public $subcommands;
@@ -1244,18 +1235,22 @@ class ProgramInfo extends RootItemInfo
 	public function usage($usage = null, $subcommandName = null)
 	{
 		$text = 'Usage: ' . $this->name;
-		
+
 		$usage = ($usage) ? $usage : new UsageFormat();
 		$eol = $usage->textWrap->endOfLineString;
-		
+
 		$subcommand = (is_string($subcommandName) ? $this->findSubcommand($subcommandName) : null);
 		$root = ($subcommand) ? $subcommand : $this;
-		
+
 		if ($subcommand)
 		{
 			$text .= ' ' . $subcommand->name;
 		}
-		
+		elseif (count($this->subcommands))
+		{
+			$text .= ' [subcommand]';
+		}
+
 		$text .= ' ' . $root->optionShortUsage($usage);
 		foreach ($root->getPositionalArguments() as $pa)
 		{
@@ -1266,50 +1261,110 @@ class ProgramInfo extends RootItemInfo
 			{
 				$abstract .= ' ...';
 			}
-			$text .= ' [' . $abstract . ']'; 	
+			$text .= ' [' . $abstract . ']';
 		}
-				
+
 		$text = $usage->textWrap->wrap($text, TextWrap::OFFSET_OTHER, 0) . $eol;
-		
+
 		if (($usage->format & UsageFormat::ABSTRACT_TEXT) == UsageFormat::ABSTRACT_TEXT)
 		{
 			if ($root->abstract)
 			{
 				$text .= $eol . $usage->textWrap->wrap($root->abstract, 1) . $eol;
 			}
-			
-			$text .= $eol;
-			$rootUsage = ($subcommand) ? $subcommand->optionUsage($usage) : $this->optionUsage($usage, 1);
-			
-			$text .= $rootUsage;
+
+			$optionsLevel = 1;
+			$programOptionCount = count($this->options);
+			$subcommandOptionCount = 0;
+			if ($subcommand)
+			{
+				$subcommandOptionCount = count($subcommand->options);
+			}
+
+			if ($subcommand)
+			{
+				if ($subcommandOptionCount)
+				{
+					$optionsLevel = 2;
+					$text .= $eol . $subcommand->optionUsage($usage, $optionsLevel) . $eol;
+					if ($programOptionCount)
+					{
+						$text .= $eol . $usage->textWrap->wrap('Program options', 0, $optionsLevel - 1) . $eol;
+					}
+				}
+			}
+			elseif (count($this->subcommands))
+			{
+				$optionsLevel = 2;
+				$text .= $eol . $usage->textWrap->wrap('Subcommands', 0, $optionsLevel - 1) . $eol . $eol;
+				foreach ($this->subcommands as $subcommand)
+				{
+					$subcommandText = $subcommand->name;
+					foreach ($subcommand->aliases as $alias)
+					{
+						$subcommandText .= ', ' . $alias;
+					}
+
+					if ($subcommand->abstract)
+					{
+						$subcommandText .= ': ' . $subcommand->abstract;
+					}
+
+					if (($usage->format & UsageFormat::DETAILED_TEXT) == UsageFormat::DETAILED_TEXT)
+					{
+						if ($subcommand->details)
+						{
+							$subcommandText .= $eol . $subcommand->details;
+						}
+					}
+
+					$text .= $usage->textWrap->wrap($subcommandText, TextWrap::OFFSET_OTHER, $optionsLevel) . $eol;
+				}
+
+				if ($programOptionCount)
+				{
+					$text .= $eol . $usage->textWrap->wrap('Program options', 0, $optionsLevel - 1) . $eol;
+				}
+			}
+
+			if ($programOptionCount)
+			{
+				$text .= $eol . $this->optionUsage($usage, $optionsLevel);
+			}
+
+			if (count($root->getPositionalArguments()))
+			{
+				$text .= $eol . $usage->textWrap->wrap('Positional arguments', 0, 1) . $eol . $eol;
+				$text .= $root->positionalArgumentsUsage($usage, 2);
+			}
 		}
-		
+
 		if (($usage->format & UsageFormat::DETAILED_TEXT) == UsageFormat::DETAILED_TEXT)
 		{
 			if ($root->details)
 			{
-				$text .= $eol . $usage->textWrap->wrap($root->details, 0) . $eol;
+				$text .= $eol . $usage->textWrap->wrap($root->details, 0, 1) . $eol;
 			}
 		}
-		
-		return $text;
+
+		return $text . $eol;
 	}
 
-	public function &appendSubcommand(SubcommandInfo &$sc)
+	public function &appendSubcommand(SubcommandInfo $sc)
 	{
-		$this->subcommands [] = $sc;
+		$this->subcommands[] = $sc;
 		return $sc;
 	}
 
 	public function findSubcommand($name)
 	{
-		foreach ($this->subcommands as &$s)
+		foreach ($this->subcommands as $s)
 		{
 			if ($s->name == $name)
 			{
 				return $s;
 			}
-			
+
 			foreach ($s->aliases as $a)
 			{
 				if ($a == $name)
@@ -1318,19 +1373,17 @@ class ProgramInfo extends RootItemInfo
 				}
 			}
 		}
-		
+
 		return null;
 	}
 
 	/**
-	 *
 	 * @param string $xmlProgramDefinition
 	 * @return boolean
 	 */
 	public function loadXmlDefinition($xmlProgramDefinition)
 	{
 		/**
-		 *
 		 * @todo
 		 *
 		 *
@@ -1376,10 +1429,9 @@ abstract class OptionResult implements itemResult
 	{
 		return $this->value();
 	}
-	
+
 	/// Option-dependant result
 	/**
-	 *
 	 * @return mixed
 	 */
 	abstract public function value();
@@ -1413,7 +1465,6 @@ class ArgumentOptionResult extends OptionResult
 {
 
 	/**
-	 *
 	 * @var mixed Option argument value
 	 */
 	public $argument;
@@ -1435,7 +1486,6 @@ class ArgumentOptionResult extends OptionResult
 	}
 
 	/**
-	 *
 	 * @return mixed Option argument if set, otherwise null
 	 */
 	public function value()
@@ -1451,7 +1501,6 @@ class MultiArgumentOptionResult extends OptionResult implements \Countable
 {
 
 	/**
-	 *
 	 * @var array Option arguments
 	 */
 	public $arguments;
@@ -1463,7 +1512,6 @@ class MultiArgumentOptionResult extends OptionResult implements \Countable
 	}
 
 	/**
-	 *
 	 * @param mixed null or array
 	 * @return If no argument is given, return all option arguments.
 	 *         If an array of index is given, return a subset of the option arguments array
@@ -1479,7 +1527,6 @@ class MultiArgumentOptionResult extends OptionResult implements \Countable
 	}
 
 	/**
-	 *
 	 * @param mixed null or array
 	 * @return If no argument is given, return all option arguments.
 	 *         If an array of index is given, return a subset of the option arguments array
@@ -1495,29 +1542,29 @@ class MultiArgumentOptionResult extends OptionResult implements \Countable
 		{
 			return array ();
 		}
-		
+
 		if (is_integer($args))
 		{
 			$args = array (
-					$args 
+					$args
 			);
 		}
-		
+
 		if (count($args) == 0)
 		{
 			return $this->arguments;
 		}
-		else if ((count($args) == 1) && is_array($args [0]))
+		else if ((count($args) == 1) && is_array($args[0]))
 		{
-			$args = $args [0];
+			$args = $args[0];
 		}
-		
+
 		$partial = array ();
 		foreach ($args as $k)
 		{
-			$partial [$k] = array_key_exists($k, $this->arguments) ? $this->arguments [$k] : null;
+			$partial[$k] = array_key_exists($k, $this->arguments) ? $this->arguments[$k] : null;
 		}
-		
+
 		return $$partial;
 	}
 }
@@ -1551,7 +1598,6 @@ class GroupOptionResult extends OptionResult
 	}
 
 	/**
-	 *
 	 * @return string variable name of the selected option if set, otherwise an empty string.
 	 *         If the option is not an exclusive option group, this value has no meaning
 	 *         @note __toString() is not equivalent to value() which will return @c null if the option is not set.
@@ -1562,7 +1608,6 @@ class GroupOptionResult extends OptionResult
 	}
 
 	/**
-	 *
 	 * @return string variable name of the selected option if set, otherwise null.
 	 *         If the option is not an exclusive option group, this value has no meaning
 	 */
@@ -1626,7 +1671,7 @@ class Message
 		return $this->message;
 	}
 	const FATALERROR_UNKNOWN_OPTION = 'Unknown option %s';
-	
+
 	/* 1 */
 	const ERROR_INVALID_OPTION_VALUE = 'Invalid value for option %s. %s';
 	/* 2 */
@@ -1668,7 +1713,6 @@ class RootItemResult implements ItemResult, \ArrayAccess
 	}
 
 	/**
-	 *
 	 * @param key $variableName
 	 * @throws \InvalidArgumentException
 	 * @return OptionResult if found
@@ -1677,14 +1721,13 @@ class RootItemResult implements ItemResult, \ArrayAccess
 	{
 		if (array_key_exists($variableName, $this->options))
 		{
-			return $this->options [$variableName];
+			return $this->options[$variableName];
 		}
-		
+
 		throw new \InvalidArgumentException('Invalid option key \'' . $variableName . '\'');
 	}
 
 	/**
-	 *
 	 * @param string $variableName
 	 * @param OptionResult $result
 	 * @throws \InvalidArgumentException
@@ -1695,13 +1738,13 @@ class RootItemResult implements ItemResult, \ArrayAccess
 		{
 			throw new \InvalidArgumentException($variableName);
 		}
-		
+
 		if (!(is_object($result) && ($result instanceof OptionResult)))
 		{
 			throw new \InvalidArgumentException($variableName);
 		}
-		
-		$this->options [$variableName] = $result;
+
+		$this->options[$variableName] = $result;
 	}
 
 	/**
@@ -1714,15 +1757,14 @@ class RootItemResult implements ItemResult, \ArrayAccess
 	{
 		if (count($args) == 0 && array_key_exists($variableName, $this->options))
 		{
-			$o = $this->options [$variableName];
+			$o = $this->options[$variableName];
 			return $o->value($args);
 		}
-		
+
 		throw new \InvalidArgumentException('Invalid option key \'' . $variableName . '\'');
 	}
 
 	/**
-	 *
 	 * @param string $variableName
 	 * @param OptionResult $result
 	 * @throws \InvalidArgumentException
@@ -1733,13 +1775,13 @@ class RootItemResult implements ItemResult, \ArrayAccess
 		{
 			throw new \InvalidArgumentException($variableName . ' already exists');
 		}
-		
+
 		if (!(is_object($result) && ($result instanceof OptionResult)))
 		{
 			throw new \InvalidArgumentException($variableName);
 		}
-		
-		$this->options [$variableName] = $result;
+
+		$this->options[$variableName] = $result;
 	}
 
 	/**
@@ -1758,7 +1800,6 @@ class RootItemResult implements ItemResult, \ArrayAccess
 	}
 
 	/**
-	 *
 	 * @param key $variableName
 	 * @throws \InvalidArgumentException
 	 * @return OptionResult if found
@@ -1767,14 +1808,13 @@ class RootItemResult implements ItemResult, \ArrayAccess
 	{
 		if (array_key_exists($variableName, $this->options))
 		{
-			return $this->options [$variableName];
+			return $this->options[$variableName];
 		}
-		
+
 		return null;
 	}
 
 	/**
-	 *
 	 * @return \ArrayIterator
 	 */
 	public function getOptionIterator()
@@ -1783,7 +1823,6 @@ class RootItemResult implements ItemResult, \ArrayAccess
 	}
 
 	/**
-	 *
 	 * @var array of OptionResult
 	 */
 	private $options;
@@ -1802,13 +1841,11 @@ class ProgramResult extends RootItemResult implements \Iterator
 {
 
 	/**
-	 *
 	 * @var string Selected sub command name
 	 */
 	public $subcommandName;
 
 	/**
-	 *
 	 * @var SubcommandResult Selected sub command result
 	 */
 	public $subcommand;
@@ -1834,7 +1871,6 @@ class ProgramResult extends RootItemResult implements \Iterator
 	}
 
 	/**
-	 *
 	 * @return integer Number of positional argument set
 	 */
 	public function valueCount()
@@ -1851,26 +1887,25 @@ class ProgramResult extends RootItemResult implements \Iterator
 	public function getMessages($minLevel = Message::WARNING, $maxLevel = Message::FATALERROR)
 	{
 		$messages = array ();
-		foreach ($this->messages as $k => &$m)
+		foreach ($this->messages as $k => $m)
 		{
 			if ($m->type < $minLevel)
 			{
 				continue;
 			}
-			
+
 			if ($m->type > $maxLevel)
 			{
 				continue;
 			}
-			
-			$messages [] = $m;
+
+			$messages[] = $m;
 		}
-		
+
 		return $messages;
 	}
 
 	/**
-	 *
 	 * @param integer $item Positional argument index
 	 * @param mixed $result Positional argument value
 	 */
@@ -1880,12 +1915,12 @@ class ProgramResult extends RootItemResult implements \Iterator
 		{
 			if (($item >= 0) && !array_key_exists($item, $this->values))
 			{
-				$this->values [$item] = $result;
+				$this->values[$item] = $result;
 			}
-			
+
 			return;
 		}
-		
+
 		return parent::offsetSet($item, $result);
 	}
 
@@ -1901,7 +1936,7 @@ class ProgramResult extends RootItemResult implements \Iterator
 		{
 			return (($item >= 0) && array_key_exists($item, $this->values));
 		}
-		
+
 		return parent::offsetExists($item);
 	}
 
@@ -1917,12 +1952,12 @@ class ProgramResult extends RootItemResult implements \Iterator
 		{
 			if (($item >= 0) && array_key_exists($item, $this->values))
 			{
-				return $this->values [$item];
+				return $this->values[$item];
 			}
-			
+
 			return null;
 		}
-		
+
 		return parent::offsetGet($item);
 	}
 
@@ -1939,7 +1974,7 @@ class ProgramResult extends RootItemResult implements \Iterator
 	 */
 	public function current()
 	{
-		return $this->valid() ? $this->values [$this->valueIterator] : null;
+		return $this->valid() ? $this->values[$this->valueIterator] : null;
 	}
 
 	/**
@@ -1972,15 +2007,15 @@ class ProgramResult extends RootItemResult implements \Iterator
 	public function setActiveSubcommand($name)
 	{
 		$this->subcommandName = $name;
-		$this->subcommand = &$this->subcommands [$name];
+		$this->subcommand = $this->subcommands[$name];
 	}
 
 	/**
 	 * Internal use
 	 */
-	public function addSubcommandResult($name, SubcommandResult &$result)
+	public function addSubcommandResult($name, SubcommandResult $result)
 	{
-		$this->subcommands [$name] = $result;
+		$this->subcommands[$name] = $result;
 		return $result;
 	}
 
@@ -2000,8 +2035,8 @@ class ProgramResult extends RootItemResult implements \Iterator
 		$args = func_get_args();
 		$type = array_shift($args);
 		$code = intval(array_shift($args));
-		
-		$this->messages [] = new Message($type, $code, call_user_func_array('sprintf', $args));
+
+		$this->messages[] = new Message($type, $code, call_user_func_array('sprintf', $args));
 	}
 
 	/**
@@ -2010,29 +2045,25 @@ class ProgramResult extends RootItemResult implements \Iterator
 	 */
 	public function appendValue($value)
 	{
-		$this->values [] = $value;
+		$this->values[] = $value;
 	}
 
 	/**
-	 *
 	 * @var array of values
 	 */
 	private $values;
 
 	/**
-	 *
 	 * @var array
 	 */
 	private $messages;
 
 	/**
-	 *
 	 * @var integer
 	 */
 	private $valueIterator;
 
 	/**
-	 *
 	 * @var array Program SubcommandResults
 	 */
 	private $subcommands;
@@ -2047,19 +2078,16 @@ class OptionNameBinding
 {
 
 	/**
-	 *
 	 * @var OptionName
 	 */
 	public $name;
 
 	/**
-	 *
 	 * @var OptionInfo
 	 */
 	public $info;
 
 	/**
-	 *
 	 * @var OptionResult
 	 */
 	public $result;
@@ -2070,7 +2098,7 @@ class OptionNameBinding
 	 */
 	public $parentResults;
 
-	public function __construct(OptionName &$n, OptionInfo &$i, $parentResults = array())
+	public function __construct(OptionName $n, OptionInfo $i, $parentResults = array())
 	{
 		$this->name = $n;
 		$this->info = $i;
@@ -2091,19 +2119,16 @@ class ParserState
 	const ABORT = 0x4;
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $stateFlags;
 
 	/**
-	 *
 	 * @var array
 	 */
 	public $argv;
 
 	/**
-	 *
 	 * @var integer
 	 */
 	public $argIndex;
@@ -2122,7 +2147,6 @@ class ParserState
 	public $activeSubcommandIndex;
 
 	/**
-	 *
 	 * @var unknown_type
 	 */
 	public $activeOption;
@@ -2131,7 +2155,7 @@ class ParserState
 
 	public $values;
 
-	public function __construct(ProgramInfo &$programInfo)
+	public function __construct(ProgramInfo $programInfo)
 	{
 		$this->optionNameBindings = array ();
 		$this->optionGroupBindings = array ();
@@ -2140,30 +2164,30 @@ class ParserState
 		$this->activeOptionArguments = array ();
 		$this->values = array ();
 		$this->anonymousOptionResults = array ();
-		
-		$this->optionNameBindings [0] = array ();
-		$this->optionGroupBindings [0] = array ();
+
+		$this->optionNameBindings[0] = array ();
+		$this->optionGroupBindings[0] = array ();
 		$n = null;
 		foreach ($programInfo->getOptions() as $o)
 		{
 			$this->initializeStateData($n, $o, 0);
 		}
-		
+
 		$scIndex = 1;
-		foreach ($programInfo->subcommands as &$s)
+		foreach ($programInfo->subcommands as $s)
 		{
-			$this->optionNameBindings [$scIndex] = array ();
-			$this->optionGroupBindings [$scIndex] = array ();
+			$this->optionNameBindings[$scIndex] = array ();
+			$this->optionGroupBindings[$scIndex] = array ();
 			foreach ($s->getOptions() as $o)
 			{
 				$this->initializeStateData($n, $o, $scIndex);
 			}
-			
-			$this->subcommandNameBindings [$s->name] = array (
+
+			$this->subcommandNameBindings[$s->name] = array (
 					'subcommandIndex' => $scIndex,
-					'subcommand' => $s 
+					'subcommand' => $s
 			);
-			
+
 			$scIndex++;
 		}
 	}
@@ -2174,7 +2198,7 @@ class ParserState
 	 * @param unknown_type $argv
 	 * @param unknown_type $startIndex
 	 */
-	public function prepareState(ProgramInfo &$programInfo, $argv, $startIndex)
+	public function prepareState(ProgramInfo $programInfo, $argv, $startIndex)
 	{
 		$this->stateFlags = 0;
 		$this->argv = $argv;
@@ -2183,68 +2207,68 @@ class ParserState
 		$this->activeOptionArguments = array ();
 		$this->values = array ();
 		$this->anonymousOptionResults = array ();
-		
+
 		$result = new ProgramResult();
 		foreach ($programInfo->getOptions() as $o)
 		{
 			$this->initializeStateData($result, $o, 0);
 		}
-		
+
 		$scIndex = 1;
-		foreach ($programInfo->subcommands as &$s)
+		foreach ($programInfo->subcommands as $s)
 		{
 			$scr = $result->addSubcommandResult($s->name, new SubcommandResult());
 			foreach ($s->getOptions() as $o)
 			{
 				$this->initializeStateData($scr, $o, $scIndex);
 			}
-			
+
 			$scIndex++;
 		}
-		
+
 		return $result;
 	}
 
-	private function createResult(RootItemResult &$rootItemResult, OptionInfo &$option)
+	private function createResult(RootItemResult $rootItemResult, OptionInfo $option)
 	{
 		$resultClassName = preg_replace(',(.+?)Info,', '\\1Result', get_class($option));
 		$result = new $resultClassName();
-		
+
 		if (is_string($option->variableName) && strlen($option->variableName))
 		{
-			$rootItemResult [$option->variableName] = $result;
+			$rootItemResult[$option->variableName] = $result;
 		}
 		else
 		{
-			$this->anonymousOptionResults [] = $result;
+			$this->anonymousOptionResults[] = $result;
 		}
-		
+
 		return $result;
 	}
 
-	private function initializeStateData(&$rootItemResult, &$option, $groupIndex, $resultTree = array())
+	private function initializeStateData($rootItemResult, $option, $groupIndex, $resultTree = array())
 	{
 		$result = null;
-		
+
 		if ($rootItemResult)
 		{
 			$result = $this->createResult($rootItemResult, $option);
 		}
-		
+
 		$names = $option->getOptionNames();
-		foreach ($names as &$n)
+		foreach ($names as $n)
 		{
 			if (!$rootItemResult)
 			{
-				$this->optionNameBindings [$groupIndex] [$n->name()] = new OptionNameBinding($n, $option);
+				$this->optionNameBindings[$groupIndex][$n->name()] = new OptionNameBinding($n, $option);
 			}
 			else // just (re)bind result
 			{
-				$this->optionNameBindings [$groupIndex] [$n->name()]->result = $result;
-				$this->optionNameBindings [$groupIndex] [$n->name()]->parentResults = $resultTree;
+				$this->optionNameBindings[$groupIndex][$n->name()]->result = $result;
+				$this->optionNameBindings[$groupIndex][$n->name()]->parentResults = $resultTree;
 			}
 		}
-		
+
 		if ($option instanceof GroupOptionInfo)
 		{
 			// Add a dummy name
@@ -2252,24 +2276,24 @@ class ParserState
 			if (!$rootItemResult)
 			{
 				$n = new OptionName('');
-				$this->optionGroupBindings [$groupIndex] [$key] = new OptionNameBinding($n, $option);
+				$this->optionGroupBindings[$groupIndex][$key] = new OptionNameBinding($n, $option);
 			}
 			else // just (re)bind result
 			{
-				$this->optionGroupBindings [$groupIndex] [$key]->result = $result;
-				$this->optionGroupBindings [$groupIndex] [$key]->parentResults = $resultTree;
+				$this->optionGroupBindings[$groupIndex][$key]->result = $result;
+				$this->optionGroupBindings[$groupIndex][$key]->parentResults = $resultTree;
 			}
-			
+
 			foreach ($option->getOptions() as $suboption)
 			{
 				$parentResults = array ();
 				if ($rootItemResult)
 				{
 					$parentResults = array_merge(array (
-							$result 
+							$result
 					), $resultTree);
 				}
-				
+
 				$this->initializeStateData($rootItemResult, $suboption, $groupIndex, $parentResults);
 			}
 		}
@@ -2285,10 +2309,9 @@ class Parser
 {
 
 	/**
-	 *
 	 * @param ProgramInfo $programInfo Program interface definition
 	 */
-	public function __construct(ProgramInfo &$programInfo)
+	public function __construct(ProgramInfo $programInfo)
 	{
 		$this->programInfo = $programInfo;
 		$this->state = new ParserState($this->programInfo);
@@ -2303,13 +2326,13 @@ class Parser
 	{
 		$s = $this->state;
 		$result = $s->prepareState($this->programInfo, $argv, $startIndex);
-		
+
 		$argc = count($argv);
-		
+
 		while ($s->argIndex < $argc)
 		{
-			$arg = $argv [$s->argIndex];
-			
+			$arg = $argv[$s->argIndex];
+
 			if ($s->activeOption)
 			{
 				if (!$this->activeOptionAcceptsArguments())
@@ -2317,7 +2340,7 @@ class Parser
 					$this->unsetActiveOption($result);
 				}
 			}
-			
+
 			if ($s->stateFlags & ParserState::ENDOFOPTIONS)
 			{
 				$this->processPositionalArgument($result, $arg);
@@ -2336,7 +2359,7 @@ class Parser
 						if (count($s->activeOptionArguments) == 0)
 						{
 							$result->appendMessage(Message::WARNING, 2, Message::WARNING_IGNORE_EOA);
-							$s->activeOptionArguments [] = $arg;
+							$s->activeOptionArguments[] = $arg;
 						}
 						else
 						{
@@ -2345,7 +2368,7 @@ class Parser
 					}
 					elseif ($s->activeOption->info instanceof ArgumentOptionInfo)
 					{
-						$s->activeOptionArguments [] = $arg;
+						$s->activeOptionArguments[] = $arg;
 					}
 				}
 				else
@@ -2358,7 +2381,7 @@ class Parser
 				$arg = substr($arg, 1);
 				if ($s->activeOption)
 				{
-					$s->activeOptionArguments [] = $arg;
+					$s->activeOptionArguments[] = $arg;
 				}
 				else
 				{
@@ -2367,7 +2390,7 @@ class Parser
 			}
 			elseif ($s->activeOption && (count($s->activeOptionArguments) == 0))
 			{
-				$s->activeOptionArguments [] = $arg;
+				$s->activeOptionArguments[] = $arg;
 			}
 			elseif (substr($arg, 0, 2) == '--')
 			{
@@ -2375,7 +2398,7 @@ class Parser
 				{
 					$this->unsetActiveOption($result);
 				}
-				
+
 				$matches = array ();
 				$cliName = $arg;
 				$name = substr($arg, 2);
@@ -2383,23 +2406,23 @@ class Parser
 				$hasTail = (preg_match('/(.+?)=(.*)/', $name, $matches) == 1);
 				if ($hasTail)
 				{
-					$name = $matches [1];
+					$name = $matches[1];
 					$cliName = '--' . $name;
-					$tail = $matches [2];
+					$tail = $matches[2];
 				}
-				
+
 				$s->activeOption = $this->findOptionByName($name);
-				
+
 				if ($s->activeOption)
 				{
 					if (!$this->optionExpected($s->activeOption))
 					{
 						$s->stateFlags |= ParserState::UNEXPECTEDOPTION;
 					}
-					
+
 					if ($hasTail)
 					{
-						$s->activeOptionArguments [] = $tail;
+						$s->activeOptionArguments[] = $tail;
 					}
 				}
 				else
@@ -2418,13 +2441,13 @@ class Parser
 					{
 						$this->unsetActiveOption($result);
 					}
-					
+
 					$name = substr($arg, 0, 1);
 					$cliName = '-' . $name;
 					$arg = substr($arg, 1);
-					
+
 					$s->activeOption = $this->findOptionByName($name);
-					
+
 					if ($s->activeOption)
 					{
 						$ao = $s->activeOption;
@@ -2432,12 +2455,12 @@ class Parser
 						{
 							$s->stateFlags |= ParserState::UNEXPECTEDOPTION;
 						}
-						
+
 						if (($ao->info instanceof ArgumentOptionInfo) || ($ao->info instanceof MultiArgumentOptionInfo))
 						{
 							if (strlen($arg) > 0)
 							{
-								$s->activeOptionArguments [] = $arg;
+								$s->activeOptionArguments[] = $arg;
 								break;
 							}
 						}
@@ -2452,45 +2475,45 @@ class Parser
 			}
 			else if ($s->activeOption)
 			{
-				$s->activeOptionArguments [] = $arg;
+				$s->activeOptionArguments[] = $arg;
 			}
 			else
 			{
 				$this->processPositionalArgument($result, $arg);
 			}
-			
+
 			if ($s->stateFlags & ParserState::ABORT)
 			{
 				break;
 			}
-			
+
 			$s->argIndex++;
 		}
-		
+
 		$this->unsetActiveOption($result);
-		
+
 		$changeCount = 0;
 		do
 		{
 			$changeCount = $this->postProcessOptions($result);
 		}
 		while ($changeCount > 0);
-		
-		foreach ($s->optionGroupBindings as $g => &$bindings)
+
+		foreach ($s->optionGroupBindings as $g => $bindings)
 		{
 			if (($g > 0) && ($g != $s->activeSubcommandIndex))
 			{
 				continue;
 			}
-			
+
 			$binding = null;
-			
-			foreach ($bindings as $n => &$binding)
+
+			foreach ($bindings as $n => $binding)
 			{
 				if (!($binding->result->isSet) && $this->optionRequired($binding))
 				{
 					$nameList = $binding->info->getOptionNameListString();
-					
+
 					if ($binding->info->groupType == GroupOptionInfo::TYPE_EXCLUSIVE)
 					{
 						$result->appendMessage(Message::ERROR, 6, Message::ERROR_REQUIRED_XGROUP, $nameList);
@@ -2502,34 +2525,34 @@ class Parser
 				}
 			}
 		}
-		
-		foreach ($s->optionNameBindings as $g => &$bindings)
+
+		foreach ($s->optionNameBindings as $g => $bindings)
 		{
 			if (($g > 0) && ($g != $s->activeSubcommandIndex))
 			{
 				continue;
 			}
-			
+
 			$binding = null;
-			
-			foreach ($bindings as $n => &$b)
+
+			foreach ($bindings as $n => $b)
 			{
 				if ($binding && ($b->info == $binding->info))
 				{
 					continue;
 				}
-				
+
 				$binding = $b;
-				
+
 				if (!($binding->result->isSet) && $this->optionRequired($binding))
 				{
 					$result->appendMessage(Message::ERROR, 4, Message::ERROR_REQUIRED_OPTION, $binding->name->cliName());
 				}
 			}
 		}
-		
+
 		$this->postProcessPositionalArguments($result);
-		
+
 		return $result;
 	}
 
@@ -2538,25 +2561,25 @@ class Parser
 		$s = $this->state;
 		$ao = $s->activeOption;
 		$i = $ao->info;
-		
+
 		if ($i instanceof MultiArgumentOptionInfo)
 		{
 			if ($i->maxArgumentCount > 0)
 			{
 				return ((count($s->activeOptionArguments) + count($ao->result->arguments)) < $ao->info->maxArgumentCount);
 			}
-			
+
 			return true;
 		}
 		else if ($i instanceof ArgumentOptionInfo)
 		{
 			return (count($s->activeOptionArguments) == 0);
 		}
-		
+
 		return false;
 	}
 
-	private function unsetActiveOption(ProgramResult &$result)
+	private function unsetActiveOption(ProgramResult $result)
 	{
 		$markSet = false;
 		$s = $this->state;
@@ -2565,18 +2588,18 @@ class Parser
 		{
 			return;
 		}
-		
+
 		if ($s->stateFlags & ParserState::UNEXPECTEDOPTION)
 		{
 			$result->appendMessage(Message::ERROR, 12, Message::ERROR_UNEXPECTED_OPTION, $s->activeOption->name->cliName());
 		}
-		
+
 		if ($ao->info instanceof SwitchOptionInfo)
 		{
 			$markSet = true;
 			if (count($s->activeOptionArguments) > 0)
 			{
-				if ((count($s->activeOptionArguments) > 1) || (strlen($s->activeOptionArguments [0]) > 0))
+				if ((count($s->activeOptionArguments) > 1) || (strlen($s->activeOptionArguments[0]) > 0))
 				{
 					$markSet = false;
 					$result->appendMessage(Message::ERROR, 13, Message::ERROR_SWITCH_ARG, $s->activeOption->name->cliName());
@@ -2587,7 +2610,7 @@ class Parser
 		{
 			if (count($s->activeOptionArguments) > 0)
 			{
-				$value = $s->activeOptionArguments [0];
+				$value = $s->activeOptionArguments[0];
 				if (!($s->stateFlags & ParserState::UNEXPECTEDOPTION) && $this->validateOptionArgument($result, $s->activeOption, $value))
 				{
 					$markSet = true;
@@ -2612,14 +2635,14 @@ class Parser
 					if (!($s->stateFlags & ParserState::UNEXPECTEDOPTION) && $this->validateOptionArgument($result, $s->activeOption, $value))
 					{
 						$markSet = true;
-						$ao->result->arguments [] = $value;
+						$ao->result->arguments[] = $value;
 					}
 					else
 					{
 						/*
 						 * Temporary add a dummy arg
 						 */
-						$ao->result->arguments [] = null;
+						$ao->result->arguments[] = null;
 					}
 				}
 			}
@@ -2628,30 +2651,30 @@ class Parser
 				$result->appendMessage(Message::ERROR, 3, Message::ERROR_MISSING_ARG, $s->activeOption->name->cliName());
 			}
 		}
-		
+
 		if (!($s->stateFlags & ParserState::UNEXPECTEDOPTION) && $markSet)
 		{
 			$this->markOption($result, $ao, true);
 		}
-		
+
 		$s->activeOptionArguments = array ();
 		$s->activeOption = null;
 		$s->stateFlags &= ~ParserState::UNEXPECTEDOPTION;
 	}
 
-	private function markOption(ProgramResult &$result, OptionNameBinding &$binding, $value)
+	private function markOption(ProgramResult $result, OptionNameBinding $binding, $value)
 	{
 		$binding->result->isSet = $value;
-		
+
 		// Update option tree
 		$previousResult = $binding->result;
 		$childInfo = $binding->info;
 		$parentInfo = $childInfo->parent;
-		
-		foreach ($binding->parentResults as &$parentResult)
+
+		foreach ($binding->parentResults as $parentResult)
 		{
 			$parentResult->isSet += ($value) ? 1 : -1;
-			
+
 			if ($parentInfo->groupType == GroupOptionInfo::TYPE_EXCLUSIVE)
 			{
 				if ($value)
@@ -2660,48 +2683,47 @@ class Parser
 					$parentResult->selectedOptionName = $childInfo->variableName;
 				}
 			}
-			
+
 			assert(($parentResult->isSet >= 0)); // *This should not happen*
-			
 
 			if ($parentResult->isSet == 0)
 			{
 				$parentResult->selectedOption = null;
 				$parentResult->selectedOptionName = null;
 			}
-			
+
 			$childInfo = $childInfo->parent;
 			$parentInfo = $parentInfo->parent;
 			$previousResult = $parentResult;
 		}
 	}
 
-	private function validateOptionArgument(ProgramResult &$result, OptionNameBinding &$binding, $value)
+	private function validateOptionArgument(ProgramResult $result, OptionNameBinding $binding, $value)
 	{
 		$s = $this->state;
 		$validates = true;
-		foreach ($binding->info->validators as &$validator)
+		foreach ($binding->info->validators as $validator)
 		{
 			$v = $validator->validate($this->state, $result, $binding, $value);
 			$validates = ($validates && $v);
 		}
-		
+
 		return $validates;
 	}
 
-	private function validatePositionalArgument(ProgramResult &$result, PositionalArgumentInfo & $paInfo, $paNumber, $value)
+	private function validatePositionalArgument(ProgramResult $result, PositionalArgumentInfo & $paInfo, $paNumber, $value)
 	{
 		$s = $this->state;
 		$validates = true;
-		foreach ($paInfo->validators as &$validator)
+		foreach ($paInfo->validators as $validator)
 		{
 			$validates = ($validates && $validator->validate($this->state, $result, $paNumber, $value));
 		}
-		
+
 		return $validates;
 	}
 
-	private function processPositionalArgument(ProgramResult &$result, $value)
+	private function processPositionalArgument(ProgramResult $result, $value)
 	{
 		if (!($this->state->stateFlags & ParserState::ENDOFOPTIONS) && ($this->state->activeSubcommandIndex == 0) && (count($this->state->values) == 0))
 		{
@@ -2709,24 +2731,24 @@ class Parser
 			{
 				if ($name == $value)
 				{
-					$this->state->activeSubcommandIndex = $binding ['subcommandIndex'];
+					$this->state->activeSubcommandIndex = $binding['subcommandIndex'];
 					$result->setActiveSubcommand($name);
 					return;
 				}
-				
-				foreach ($binding ['subcommand']->aliases as $alias)
+
+				foreach ($binding['subcommand']->aliases as $alias)
 				{
 					if ($alias == $value)
 					{
-						$this->state->activeSubcommandIndex = $binding ['subcommandIndex'];
+						$this->state->activeSubcommandIndex = $binding['subcommandIndex'];
 						$result->setActiveSubcommand($name);
 						return;
 					}
 				}
 			}
 		}
-		
-		$this->state->values [] = $value;
+
+		$this->state->values[] = $value;
 	}
 
 	private function findOptionByName($name)
@@ -2734,7 +2756,7 @@ class Parser
 		$s = $this->state;
 		if ($s->activeSubcommandIndex)
 		{
-			foreach ($s->optionNameBindings [$s->activeSubcommandIndex] as $n => &$binding)
+			foreach ($s->optionNameBindings[$s->activeSubcommandIndex] as $n => $binding)
 			{
 				if ($name == $n)
 				{
@@ -2742,24 +2764,24 @@ class Parser
 				}
 			}
 		}
-		
-		foreach ($s->optionNameBindings [0] as $n => &$binding)
+
+		foreach ($s->optionNameBindings[0] as $n => $binding)
 		{
 			if ($name == $n)
 			{
 				return $binding;
 			}
 		}
-		
+
 		return null;
 	}
 
-	private function optionExpected(OptionNameBinding &$option)
+	private function optionExpected(OptionNameBinding $option)
 	{
 		$s = $this->state;
 		$parentInfo = $option->info->parent;
 		$previousResult = $option->result;
-		
+
 		foreach ($option->parentResults as $i => $parentResult)
 		{
 			if ($parentInfo->groupType == GroupOptionInfo::TYPE_EXCLUSIVE)
@@ -2769,25 +2791,25 @@ class Parser
 					return false;
 				}
 			}
-			
+
 			$parentInfo = $parentInfo->parent;
 			$previousResult = $parentResult;
 		}
-		
+
 		return true;
 	}
 
-	private function optionRequired(OptionNameBinding &$binding)
+	private function optionRequired(OptionNameBinding $binding)
 	{
 		if (!($binding->info->optionFlags & ItemInfo::REQUIRED))
 		{
 			return false;
 		}
-		
+
 		$previousResult = $binding->result;
 		$parentInfo = $binding->info->parent;
-		
-		foreach ($binding->parentResults as &$parentResult)
+
+		foreach ($binding->parentResults as $parentResult)
 		{
 			if ($parentInfo->groupType == GroupOptionInfo::TYPE_EXCLUSIVE)
 			{
@@ -2796,19 +2818,18 @@ class Parser
 					return false;
 				}
 			}
-			
+
 			$parentInfo = $parentInfo->parent;
 			$previousResult = $parentResult;
 		}
 
 		return true;
 	}
-	
+
 	/**
-	 *
 	 * @return integer Number of changes
 	 */
-	private function postProcessOptions(ProgramResult &$result)
+	private function postProcessOptions(ProgramResult $result)
 	{
 		$s = $this->state;
 		$current = null;
@@ -2821,9 +2842,9 @@ class Parser
 				{
 					continue;
 				}
-				
+
 				$current = $binding;
-				
+
 				if ($current->info instanceof ArgumentOptionInfo)
 				{
 					if (!$current->result->isSet)
@@ -2840,7 +2861,7 @@ class Parser
 						}
 					}
 				}
-				
+
 				else if ($current->info instanceof MultiArgumentOptionInfo)
 				{
 					$c = count($current->result->arguments);
@@ -2850,7 +2871,7 @@ class Parser
 						$this->markOption($result, $current, false);
 						$changeCount++;
 					}
-					
+
 					if (!($current->result->isSet))
 					{
 						$current->result->arguments = array ();
@@ -2858,21 +2879,21 @@ class Parser
 				}
 			}
 		}
-		
+
 		return $changeCount;
 	}
 
-	private function postProcessPositionalArguments(ProgramResult &$result)
+	private function postProcessPositionalArguments(ProgramResult $result)
 	{
 		$s = $this->state;
 		$root = $this->programInfo;
 		$validPositionalArgumentCount = 0;
-		
+
 		if ($s->activeSubcommandIndex > 0)
 		{
-			$root = $this->programInfo->subcommands [$s->activeSubcommandIndex - 1];
+			$root = $this->programInfo->subcommands[$s->activeSubcommandIndex - 1];
 		}
-		
+
 		$paInfoCount = count($root->getPositionalArguments());
 		if ($paInfoCount == 0 && (count($s->values) > 0))
 		{
@@ -2884,10 +2905,10 @@ class Parser
 			{
 				$result->appendMessage(Message::ERROR, 8, Message::ERROR_PROGRAM_POSARG);
 			}
-			
+
 			return $validPositionalArgumentCount;
 		}
-		
+
 		$paInfoIndex = 0;
 		$paNumber = 1;
 		$currentPaiValueCount = 0;
@@ -2899,10 +2920,10 @@ class Parser
 			{
 				break;
 			}
-			
+
 			$currentPaiValueCount++;
 			$processedValueCount++;
-			
+
 			$paInfo = $root->getPositionalArgument($paInfoIndex);
 			if ($this->validatePositionalArgument($result, $paInfo, $paNumber, $value))
 			{
@@ -2912,20 +2933,19 @@ class Parser
 			else
 			{
 			/**
-			 *
 			 * @todo continue or abort ?
 			 */
 			}
-			
+
 			if (($paInfo->maxArgumentCount > 0) && ($currentPaiValueCount == $paInfo->maxArgumentCount))
 			{
 				$currentPaiValueCount = 0;
 				$paInfoIndex++;
 			}
-			
+
 			$paNumber++;
 		}
-		
+
 		if (count($s->values) > $processedValueCount)
 		{
 			$result->appendMessage(Message::ERROR, 10, Message::ERROR_TOOMANY_POSARG);
@@ -2935,7 +2955,7 @@ class Parser
 			/**
 			 * @note not yet supported by schema
 			 */
-			for($i = $paInfoIndex; $i < $paInfoCount; $i++)
+			for ($i = $paInfoIndex; $i < $paInfoCount; $i++)
 			{
 				if ($root->getPositionalArgument($i)->positionalArgumentFlags & ItemInfo::REQUIRED)
 				{
@@ -2946,13 +2966,11 @@ class Parser
 	}
 
 	/**
-	 *
 	 * @var ProgramInfo
 	 */
 	private $programInfo;
 
 	/**
-	 *
 	 * @var ParserState
 	 */
 	private $state;
@@ -3012,9 +3030,12 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 }// namespace Program
 ?>
 <?php
-
+// Main code
 namespace 
 {
+	
+	require_once("phar://create-autoload-file/__parser.php");
+	require_once("phar://create-autoload-file/__programinfo.php");
 
 	function path_cleanup($path)
 	{
@@ -3127,9 +3148,9 @@ namespace
 		}
 	}
 	
-	$info = new Program\createAutoloadFileProgramInfo();
-	$parser = new Parser\Parser($info);
-	$usage = new Parser\UsageFormat();
+	$info = new \Program\createAutoloadFileProgramInfo();
+	$parser = new \Parser\Parser($info);
+	$usage = new \Parser\UsageFormat();
 	$result = $parser->parse($_SERVER['argv'], 1);
 	
 	if (!$result())

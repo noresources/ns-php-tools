@@ -1,7 +1,10 @@
 <?php
-
+// Main code
 namespace 
 {
+	
+	require_once("phar://create-autoload-file/__parser.php");
+	require_once("phar://create-autoload-file/__programinfo.php");
 
 	function path_cleanup($path)
 	{
@@ -114,9 +117,9 @@ namespace
 		}
 	}
 	
-	$info = new Program\createAutoloadFileProgramInfo();
-	$parser = new Parser\Parser($info);
-	$usage = new Parser\UsageFormat();
+	$info = new \Program\createAutoloadFileProgramInfo();
+	$parser = new \Parser\Parser($info);
+	$usage = new \Parser\UsageFormat();
 	$result = $parser->parse($_SERVER['argv'], 1);
 	
 	if (!$result())
