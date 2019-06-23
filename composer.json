@@ -11,8 +11,17 @@
 			"role": "lead"
 		}
 	],
+	"repositories" : [{
+			"type" : "git",
+			"url" : "https://github.com/noresources/ns-xml"
+		}
+	],
+	"prefer-stable": false,
 	"require": {
 		"php": "^5.3"
+	},
+	"require-dev" : {
+		"noresources/ns-xml" : "*"
 	},
 	"minimum-stability": "dev",
 	"bin": [

@@ -4,9 +4,59 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c3042bdc7f544b818fb6c91eb21af41",
+    "content-hash": "eee49f7ac6bc2cf308b0dfbea17280dc",
     "packages": [],
-    "packages-dev": [],
+    "packages-dev": [
+        {
+            "name": "noresources/ns-xml",
+            "version": "dev-composer",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/noresources/ns-xml",
+                "reference": "5341653522f0372602dfa6ce8d9895dadb74f78f"
+            },
+            "require": {
+                "php": "^5.3"
+            },
+            "bin": [
+                "ns/sh/build-php.sh",
+                "ns/sh/xsltdeps.sh",
+                "ns/sh/prgproc.sh",
+                "ns/sh/new-xsh.sh",
+                "ns/sh/build-xulapp.sh",
+                "ns/sh/sampleapp.sh",
+                "ns/sh/build-python.sh",
+                "ns/sh/build-shellscript.sh",
+                "ns/sh/build-c.sh",
+                "ns/sh/build-php.sh",
+                "ns/sh/xsltdeps.sh",
+                "ns/sh/prgproc.sh",
+                "ns/sh/new-xsh.sh",
+                "ns/sh/build-xulapp.sh",
+                "ns/sh/sampleapp.sh",
+                "ns/sh/build-python.sh",
+                "ns/sh/build-shellscript.sh",
+                "ns/sh/build-c.sh"
+            ],
+            "type": "project",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Renaud Guillard",
+                    "email": "dev@nore.fr",
+                    "role": "lead"
+                }
+            ],
+            "description": "A collection of XML-based tools to generate source code and programs",
+            "homepage": "https://ns-xml.nore.fr",
+            "support": {
+                "issues": "https://github.com/noresources/ns-xml/issues"
+            },
+            "time": "2019-06-21T20:08:04+00:00"
+        }
+    ],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": [],
