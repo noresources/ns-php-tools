@@ -21,7 +21,7 @@ do
 		--program-ns 'Program' \
 		-x "${xml}" \
 		-m "${xml%xml}php" \
-		-o "${rootPath}/bin/${path}/${file%.xml}"
+		-o "${rootPath}/bin/${path}/${file%.xml}.php"
 done << EOF
 $(find "${binResourceBasePath}" -type f -name '*.xml')
 EOF
