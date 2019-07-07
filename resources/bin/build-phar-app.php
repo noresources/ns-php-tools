@@ -73,6 +73,7 @@ namespace NoreSources\Tools
 		public static function prerequisite()
 		{
 			$errorCount = 0;
+			
 			foreach (array (
 					'dom',
 					'xsl',
@@ -373,15 +374,16 @@ namespace NoreSources\Tools
 			{
 				self::addXmlFile($context, $path, $localName);
 			}
-			elseif ($mimeType == 'text/x-php')
-			{
-				$context->sourceFiles->append($localName);
-			}
 			else
 			{
+				if ($mimeType == 'text/x-php')
+				{
+					$context->sourceFiles->append($localName);
+				}
+				
 				$context->archive->addFile($path, $localName);
 			}
-
+			
 			return 'phar://' . $context->archive->getAlias() . '/' . $localName;
 		}
 
