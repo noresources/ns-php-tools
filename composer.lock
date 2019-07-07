@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1eb99e5258fcc1a174fbca6faad4f200",
+    "content-hash": "932a8c7803a8ac1ca446b13e9997274f",
     "packages": [],
     "packages-dev": [
         {
@@ -13,10 +13,10 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-php-core",
-                "reference": "d407ccc0f0b53888dc2db74d2a48c7cb09d98775"
+                "reference": "aabd422cb54f68757ab17e26af68f3ccd4309de1"
             },
             "require": {
-                "php": "^5.4"
+                "php": ">= 5.3"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8"
@@ -46,7 +46,7 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-php-core/issues"
             },
-            "time": "2019-07-03T17:21:24+00:00"
+            "time": "2019-07-07T22:21:59+00:00"
         },
         {
             "name": "noresources/ns-php-xslt",
@@ -54,13 +54,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-php-xslt",
-                "reference": "0b0a6dbbfbfcc158c51ece6aa592d7b716f33128"
+                "reference": "8a82b7a67f2fcdaf4cfd72dbdaf9aec8f25d8686"
             },
             "require": {
                 "ext-dom": "*",
                 "ext-xsl": "*",
-                "noresources/ns-php-core": "^2.0",
-                "php": "^5.4"
+                "noresources/ns-php-core": "~2.0",
+                "php": ">= 5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8"
             },
             "type": "library",
             "autoload": {
@@ -82,18 +85,21 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-php-xslt/issues"
             },
-            "time": "2019-06-30T20:15:31+00:00"
+            "time": "2019-07-07T22:21:11+00:00"
         },
         {
             "name": "noresources/ns-xml",
-            "version": "dev-composer",
+            "version": "dev-ns-php-tools",
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-xml",
-                "reference": "5341653522f0372602dfa6ce8d9895dadb74f78f"
+                "reference": "79d61919e63a13c26d60be5fecc447e9e19fab3e"
             },
             "require": {
-                "php": "^5.3"
+                "php": ">= 5.3"
+            },
+            "require-dev": {
+                "noresources/ns-php-xslt": "^2.0"
             },
             "bin": [
                 "ns/sh/build-php.sh",
@@ -116,6 +122,16 @@
                 "ns/sh/build-c.sh"
             ],
             "type": "project",
+            "autoload": {
+                "psr-4": {
+                    "NoreSources\\NSXML\\Composer\\": "tools/php/composer//"
+                }
+            },
+            "scripts": {
+                "post-update-cmd": [
+                    "@php tools/php/amalgamation.php"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -126,12 +142,12 @@
                     "role": "lead"
                 }
             ],
-            "description": "A collection of XML-based tools to generate source code and programs",
+            "description": "A collection of NSXML-based tools to generate source code and programs",
             "homepage": "https://ns-xml.nore.fr",
             "support": {
                 "issues": "https://github.com/noresources/ns-xml/issues"
             },
-            "time": "2019-06-21T20:08:04+00:00"
+            "time": "2019-07-07T22:23:30+00:00"
         }
     ],
     "aliases": [],
@@ -140,7 +156,10 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": "^5.3"
+        "php": ">= 5.4",
+        "ext-dom": "*",
+        "ext-xml": "*",
+        "ext-xsl": "*"
     },
     "platform-dev": []
 }
