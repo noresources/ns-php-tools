@@ -73,6 +73,12 @@ namespace NoreSources\Tools
 		public static function prerequisite()
 		{
 			$errorCount = 0;
+			$readOnly = ini_get('phar.readonly');
+			if (intval ($readOnly))
+			{
+				$errorCount++;
+				error_log('PHP setting phar.readonly must be set to Off');
+			}
 			
 			foreach (array (
 					'dom',

@@ -49,7 +49,6 @@ do
 	output="${rootPath}/bin/${path}/${file%.xml}.phar"
 	
 	buildPharOptions=(\
-		--verbose \
 		--parser-ns 'Parser' \
 		--program-ns 'Program' \
 		--bootstrap "${rootPath}/vendor/autoload.php" \
@@ -59,6 +58,9 @@ do
 		-o "${output}" \
 	)
 	
+	#buildPharOptions=("${buildPharOptions[@]}" --verbose)
+	buildPharOptions=("${buildPharOptions[@]}" --compress-files)
+		
 	[ -f "${xml%xml}json" ] && buildPharOptions=("${buildPharOptions[@]}" -E "${xml%xml}json")
 	
 	"${buildPhar}" \
@@ -68,33 +70,39 @@ $(find "${binResourceBasePath}" -type f -name '*.xml')
 EOF
 
 # Pass 3: phar using build-phar-app.phar
-echo '-- Phar (bis)'
-buildPhar="${rootPath}/bin/build-phar-app.phar"
-[ -x "${buildPhar}" ] || exit 0
-
-while read xml
-do
-	file="$(basename "${xml}")"
-	directory="$(dirname "${xml}")"
-	path="${directory#${binResourceBasePath}}"
-	path="${path%/}"
-	[ -z "${path}" ] && path='.'
-
-	output="${rootPath}/bin/${path}/${file%.xml}.2.phar"
+if false
+then
+	echo '-- Phar (bis)'
+	buildPhar="${rootPath}/bin/build-phar-app.phar"
+	[ -x "${buildPhar}" ] || exit 0
 	
-	buildPharOptions=(\
-		--verbose \
-		--parser-ns 'Parser' \
-		--program-ns 'Program' \
-		-x "${xml}" \
-		-a "${xml%xml}php" \
-		-o "${output}" \
-	)
+	while read xml
+	do
+		file="$(basename "${xml}")"
+		directory="$(dirname "${xml}")"
+		path="${directory#${binResourceBasePath}}"
+		path="${path%/}"
+		[ -z "${path}" ] && path='.'
 	
-	[ -f "${xml%xml}json" ] && buildPharOptions=("${buildPharOptions[@]}" -E "${xml%xml}json")
-	
-	"${buildPhar}" \
-		"${buildPharOptions[@]}"
-done << EOF
+		output="${rootPath}/bin/${path}/${file%.xml}.2.phar"
+		
+		buildPharOptions=(\
+			--parser-ns 'Parser' \
+			--program-ns 'Program' \
+			-x "${xml}" \
+			-a "${xml%xml}php" \
+			-o "${output}" \
+		)
+		
+		#buildPharOptions=("${buildPharOptions[@]}" --verbose)
+		buildPharOptions=("${buildPharOptions[@]}" --compress-files)
+		
+		[ -f "${xml%xml}json" ] && buildPharOptions=("${buildPharOptions[@]}" -E "${xml%xml}json")
+		
+		"${buildPhar}" \
+			"${buildPharOptions[@]}"
+	done << EOF
 $(find "${binResourceBasePath}" -type f -name '*.xml')
 EOF
+
+fi

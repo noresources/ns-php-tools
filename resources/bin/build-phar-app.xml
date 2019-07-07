@@ -88,14 +88,19 @@
 			</prg:documentation>
 			<prg:options>
 				<prg:switch>
-					<prg:databinding><prg:variable>compressFiles</prg:variable></prg:databinding>
-					<prg:documentation><prg:abstract>Compress files</prg:abstract></prg:documentation>
+					<prg:databinding>
+						<prg:variable>compressFiles</prg:variable>
+					</prg:databinding>
+					<prg:documentation>
+						<prg:abstract>Compress files</prg:abstract>
+						<prg:details>Compress embedded files</prg:details>
+					</prg:documentation>
 					<prg:names>
-						<prg:long>compress</prg:long>
+						<prg:long>compress-files</prg:long>
 						<prg:short>c</prg:short>
 					</prg:names>
 				</prg:switch>
-				
+
 				<!-- Parser namespace -->
 				<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/apps/build-php.xml"
 					xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(/prg:program/prg:options//prg:argument[@id = 'build-php.option.parserNamespace'])" />
