@@ -1,0 +1,6 @@
+[
+	{
+		"source": "../../vendor/noresources/ns-php-core/PathUtil.php",
+		"target": "ns-php-core/PathUtil.php"
+	}
+]

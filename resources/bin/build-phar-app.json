@@ -1,0 +1,27 @@
+[
+	{
+		"source": "../../vendor/noresources/ns-xml/ns/xsl/program/2.0/php/parser.xsl",
+		"target": "ns/xsl/program/2.0/php/parser.xsl"
+	},
+	{
+		"source": "../../vendor/noresources/ns-xml/ns/xsl/program/2.0/php/programinfo.xsl",
+		"target": "ns/xsl/program/2.0/php/programinfo.xsl"
+	},
+	{
+		"source": "../../vendor/noresources/ns-xml/ns/xsd/program/2.0/program.xsd",
+		"target": "ns/xsd/program/2.0/program.xsd"
+	},
+	{
+		"source": "../../vendor/noresources/ns-xml/ns/xsd/www.w3.org/XML/1998/namespace.xsd",
+		"target": "ns/xsd/www.w3.org/XML/1998/namespace.xsd",
+		"type": "text/xml"
+	},
+	{
+		"source": "../../vendor/noresources/ns-php-core/PathUtil.php",
+		"target": "ns-php-core/PathUtil.php"
+	},
+	{
+		"source": "../../vendor/noresources/ns-php-xslt/Stylesheet.php",
+		"target": "ns-php-xslt/Stylesheet.php"
+	}
+]

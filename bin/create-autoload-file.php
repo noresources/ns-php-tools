@@ -1017,7 +1017,7 @@ class OptionContainerOptionInfo extends OptionInfo
 			{
 				$text .= $usage->textWrap->wrap($optionTaxt, TextWrap::OFFSET_OTHER, $level) . $eol;
 			}
-			
+
 			if ($o instanceof GroupOptionInfo)
 			{
 				$subOptionsText = $o->optionUsage($usage, $level + 1);
@@ -1427,6 +1427,8 @@ abstract class OptionResult implements itemResult
 	 */
 	public function __invoke()
 	{
+		if (func_num_args() > 0)
+			return call_user_func_array(array ($this, 'value'), func_get_args());
 		return $this->value();
 	}
 
@@ -1511,61 +1513,78 @@ class MultiArgumentOptionResult extends OptionResult implements \Countable
 		$this->arguments = array ();
 	}
 
-	/**
-	 * @param mixed null or array
-	 * @return If no argument is given, return all option arguments.
-	 *         If an array of index is given, return a subset of the option arguments array
-	 */
-	public function __invoke( /* ... */ )
-	{
-		return $this->multiArgumentValue(func_get_args());
-	}
-
 	public function count()
 	{
 		return $this->isSet ? count($this->arguments) : 0;
 	}
-
+		
 	/**
-	 * @param mixed null or array
-	 * @return If no argument is given, return all option arguments.
-	 *         If an array of index is given, return a subset of the option arguments array
+	 * @para integer|array|null 
+	 * @return mixed A single argument or array of arguments
 	 */
-	public function value(/* ... */)
+	public function value()
 	{
-		return $this->multiArgumentValue(func_get_args());
+		$c = func_num_args();
+		
+		if ($c == 1)
+		{
+			$a = func_get_arg(0);
+			if (\is_array($a))
+			{
+				return $this->multiArgumentValue($a);
+			}
+		}
+		else if ($c > 1)
+		{
+			return $this->multiArgumentValue(func_get_args());
+		}
+		
+		return $this->multiArgumentValue(null);
 	}
 
-	private function multiArgumentValue($args)
+	/**
+	 * @param integer|array $subset Argument index or array of argument indexes
+	 * @throws \BadMethodCallException
+	 * @return array|array|NULL|NULL[]
+	 */
+	private function multiArgumentValue($subset)
 	{
 		if (!$this->isSet)
 		{
 			return array ();
 		}
-
-		if (is_integer($args))
-		{
-			$args = array (
-					$args
-			);
-		}
-
-		if (count($args) == 0)
+		
+		if (\is_null($subset))
 		{
 			return $this->arguments;
 		}
-		else if ((count($args) == 1) && is_array($args[0]))
+		elseif (is_integer($subset))
 		{
-			$args = $args[0];
+			if (\array_key_exists($subset, $this->arguments))
+			{
+				return $this->arguments[$subset];
+			}
+			
+			return null;
 		}
-
-		$partial = array ();
-		foreach ($args as $k)
+		elseif (\is_array($subset))
 		{
-			$partial[$k] = array_key_exists($k, $this->arguments) ? $this->arguments[$k] : null;
+			$partial = array ();
+			foreach ($subset as $k)
+			{
+				if (!\is_integer($k))
+					continue;
+					
+					$partial[$k] = array_key_exists($k, $this->arguments) ? $this->arguments[$k] : null;
+			}
+			
+			return $partial;
 		}
-
-		return $$partial;
+		else
+		{
+			$t = (is_object($subset) ? get_class($subset) : gettype($subset));
+			throw new \BadMethodCallException(__METHOD__ . ': Invalid argument type ' . $t . ', null, integer or array expected');
+		}
 	}
 }
 
@@ -1755,10 +1774,9 @@ class RootItemResult implements ItemResult, \ArrayAccess
 	 */
 	public function __call($variableName, $args = array())
 	{
-		if (count($args) == 0 && array_key_exists($variableName, $this->options))
+		if (array_key_exists($variableName, $this->options))
 		{
-			$o = $this->options[$variableName];
-			return $o->value($args);
+			return call_user_func_array(array ($this->options[$variableName], 'value'), $args);
 		}
 
 		throw new \InvalidArgumentException('Invalid option key \'' . $variableName . '\'');
@@ -1863,10 +1881,21 @@ class ProgramResult extends RootItemResult implements \Iterator
 	/**
 	 * Indicates if the command line argument parsing completes successfully (without any errors)
 	 * @return boolean
+	 * @return boolean
 	 */
 	public function __invoke()
 	{
-		$errors = $this->getMessages(Message::ERROR, Message::FATALERROR);
+		return self::success($this);
+	}
+	
+	/**
+	 * Indicates if the command line argument parsing completes successfully (without any errors)
+	 * @return boolean
+	 * @return boolean
+	 */
+	public static function success (ProgramResult $result)
+	{
+		$errors = $result->getMessages(Message::ERROR, Message::FATALERROR);
 		return (count($errors) == 0);
 	}
 
@@ -2996,28 +3025,20 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 		$G_1_output->validators[] = new \Parser\PathValueValidator(0 | \Parser\PathValueValidator::TYPE_FILE);
 		$this->appendOption($G_1_output);
 		
-		// prg:argument functionName
-		$G_2_function_name = new \Parser\ArgumentOptionInfo("functionName", array('function-name', 'name', 'n'), (0));
+		// prg:multiargument excludePatterns
+		$G_2_exclude = new \Parser\MultiArgumentOptionInfo("excludePatterns", array('exclude', 'x'), (0));
+		$G_2_exclude->argumentType = \Parser\ArgumentType::STRING;
 		
-		$G_2_function_name->abstract = 'Autoload function name';
+		$G_2_exclude->abstract = 'Path exclusion patterns';
 		
-		$G_2_function_name->details = 'If this parameter is not provided, a random name will be used';
-		$this->appendOption($G_2_function_name);
-		
-		// prg:argument includeExtension
-		$G_3_include_extension = new \Parser\ArgumentOptionInfo("includeExtension", array('include-extension'), (0));
-		$G_3_include_extension->defaultValue = 'inc.php';
-		
-		$G_3_include_extension->abstract = 'Use include_once() for file with this extension';
-		
-		$G_3_include_extension->details = 'By default, require_once() is used to load files. If the extension of the processed file match the given pattern, include_once will be used instead' . PHP_EOL . 'If the given extension is empty, require_once() will always be used.';
-		$this->appendOption($G_3_include_extension);
+		$G_2_exclude->details = 'Any directory or file matching one of these patterns will be excluded from processing.' . PHP_EOL . 'Input paths are evaluated relative to the working directory';
+		$this->appendOption($G_2_exclude);
 		
 		// prg:switch displayHelp
-		$G_4_help = new \Parser\SwitchOptionInfo("displayHelp", array('help'), (0));
+		$G_3_help = new \Parser\SwitchOptionInfo("displayHelp", array('help'), (0));
 		
-		$G_4_help->abstract = 'Display help';
-		$this->appendOption($G_4_help);
+		$G_3_help->abstract = 'Display program usage';
+		$this->appendOption($G_3_help);
 		$G_1_ = $this->appendPositionalArgument( new \Parser\PositionalArgumentInfo(-1, \Parser\ArgumentType::PATH, (0)));
 		$G_1_->validators[] = new \Parser\PathValueValidator(0 | \Parser\PathValueValidator::EXISTS | \Parser\PathValueValidator::TYPE_FILE | \Parser\PathValueValidator::TYPE_FOLDER);
 		
@@ -3030,225 +3051,257 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 }// namespace Program
 ?>
 <?php
-// Main code
+
 namespace 
 {
+
+	class TraversalContext
+	{
+		/**
+		 * @var string
+		 */
+		public $workingPath;
+		
+		/**
+		 * @var \Parser\ProgramResult
+		 */
+		public $options;
 	
-	require_once("phar://create-autoload-file/__parser.php");
-	require_once("phar://create-autoload-file/__programinfo.php");
-
-	function path_cleanup($path)
-	{
-		$path = str_replace('\\', '/', $path);
-		$path = preg_replace(chr(1) . '/[^/]+/\.\.(/|$)' . chr(1), '\1', $path);
-		$path = preg_replace(chr(1) . '/\.(/|$)' . chr(1), '\1', $path);
-		return $path;
+		/**
+		 * @var \ArrayObject
+		 */
+		public $classMap;
 	}
-
-	function path_get_relative($from, $to)
+	
+	class Application
 	{
-		$from = trim(path_cleanup($from), '/');
-		$to = trim(path_cleanup($to), '/');
-		
-		$from = explode('/', $from);
-		$to = explode('/', $to);
-		$fromCount = count($from);
-		$toCount = count($to);
-		$min = ($fromCount < $toCount) ? $fromCount : $toCount;
-		$commonPartsCount = 0;
-		$result = array ();
-		while (($commonPartsCount < $min) && ($from[$commonPartsCount] == $to[$commonPartsCount]))
-		{
-			$commonPartsCount++;
-		}
-		
-		for ($i = $commonPartsCount; $i < $fromCount; $i++)
-		{
-			$result[] = '..';
-		}
-		
-		for ($i = $commonPartsCount; $i < $toCount; $i++)
-		{
-			$result[] = $to[$i];
-		}
-		
-		if (count($result) == 0)
-		{
-			return '.';
-		}
-		
-		return implode('/', $result);
-	}
 
-	function processTree(&$classArray, $outputFile, $treeRoot, $treeNode = null)
-	{
-		if (!$treeNode)
+		private static function pathCleanup($path)
 		{
-			$treeNode = $treeRoot;
+			$path = str_replace('\\', '/', $path);
+			$path = preg_replace(chr(1) . '/[^/]+/\.\.(/|$)' . chr(1), '\1', $path);
+			$path = preg_replace(chr(1) . '/\.(/|$)' . chr(1), '\1', $path);
+			return $path;
 		}
-		
-		$iterator = opendir($treeNode);
-		while ($item = readdir($iterator))
-		{
-			if (substr($item, 0, 1) == '.')
-			{
-				continue;
-			}
-			
-			$itemPath = $treeNode . '/' . $item;
-			
-			echo ($itemPath . PHP_EOL);
-			if (is_dir($itemPath))
-			{
-				processTree($classArray, $outputFile, $treeRoot, $itemPath);
-			}
-			else if (is_file($itemPath))
-			{
-				processTreeFile($classArray, $outputFile, $treeRoot, $itemPath);
-			}
-		}
-		
-		closedir($iterator);
-	}
 
-	function processTreeFile(&$classArray, $outputFile, $treeRoot, $treeFile)
-	{
-		$outputDirectory = realpath(dirname($outputFile));
-		$relativeToOutput = path_get_relative($outputDirectory, $treeFile);
-		
-		$tokens = token_get_all(file_get_contents($treeFile));
-		$count = count($tokens);
-		$context = "";
-		for ($i = 2; $i < $count; $i++)
+		private static function getRelativePath($from, $to)
 		{
-			if ($tokens[$i - 2][0] == T_NAMESPACE && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING)
+			$from = trim(self::pathCleanup($from), '/');
+			$to = trim(self::pathCleanup($to), '/');
+
+			$from = explode('/', $from);
+			$to = explode('/', $to);
+			$fromCount = count($from);
+			$toCount = count($to);
+			$min = ($fromCount < $toCount) ? $fromCount : $toCount;
+			$commonPartsCount = 0;
+			$result = array ();
+			while (($commonPartsCount < $min) && ($from[$commonPartsCount] == $to[$commonPartsCount]))
 			{
-				$context = $tokens[$i][1];
-				$i += 2;
-				while (($i < $count) && ($tokens[$i - 1][0] == T_NS_SEPARATOR))
+				$commonPartsCount++;
+			}
+
+			for ($i = $commonPartsCount; $i < $fromCount; $i++)
+			{
+				$result[] = '..';
+			}
+
+			for ($i = $commonPartsCount; $i < $toCount; $i++)
+			{
+				$result[] = $to[$i];
+			}
+
+			if (count($result) == 0)
+			{
+				return '.';
+			}
+
+			return implode('/', $result);
+		}
+
+		private static function processTree(TraversalContext $traversalContext, $outputFile, $treeRoot, $treeNode = null)
+		{
+			if (!$treeNode)
+			{
+				$treeNode = $treeRoot;
+			}
+
+			$iterator = opendir($treeNode);
+			while ($item = readdir($iterator))
+			{
+				if (substr($item, 0, 1) == '.')
 				{
-					$context .= '\\' . $tokens[$i][1];
+					continue;
+				}
+
+				$itemPath = $treeNode . '/' . $item;
+
+				if (is_dir($itemPath))
+				{
+					self::processTree($traversalContext, $outputFile, $treeRoot, $itemPath);
+				}
+				else if (is_file($itemPath))
+				{
+					self::processTreeFile($traversalContext, $outputFile, $treeRoot, $itemPath);
+				}
+			}
+
+			closedir($iterator);
+		}
+
+		private static function processTreeFile(TraversalContext $traversalContext, $outputFile, $treeRoot, $treeFile)
+		{
+			if (mime_content_type ($treeFile) != 'text/x-php') 
+				return;
+			
+			$relativeToWorkingPath = self::getRelativePath($traversalContext->workingPath, $treeFile);
+			
+			foreach ($traversalContext->options->excludePatterns() as $pattern) 
+			{
+				if (preg_match ($pattern, $relativeToWorkingPath)) return;
+			}
+			
+			echo($relativeToWorkingPath . PHP_EOL);
+						
+			$outputDirectory = realpath(dirname($outputFile));
+			$relativeToOutput = self::getRelativePath($outputDirectory, $treeFile);
+
+			$tokens = token_get_all(file_get_contents($treeFile));
+			$count = count($tokens);
+			$context = "";
+			for ($i = 2; $i < $count; $i++)
+			{
+				if ($tokens[$i - 2][0] == T_NAMESPACE && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING)
+				{
+					$context = $tokens[$i][1];
 					$i += 2;
+					while (($i < $count) && ($tokens[$i - 1][0] == T_NS_SEPARATOR))
+					{
+						$context .= '\\' . $tokens[$i][1];
+						$i += 2;
+					}
+
+					continue;
 				}
-				
-				continue;
+
+				if ((($tokens[$i - 2][0] == T_CLASS) || ($tokens[$i - 2][0] == T_INTERFACE)) && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING)
+				{
+
+					$class_name = $tokens[$i][1];
+					if (strlen($context))
+					{
+						$class_name = $context . '\\' . $class_name;
+					}
+
+					$traversalContext->classMap->offsetSet($class_name, $relativeToOutput);
+				}
+			}
+		}
+
+		public static function main($argv)
+		{
+			$info = new \Program\createAutoloadFileProgramInfo();
+			$parser = new \Parser\Parser($info);
+			$usage = new \Parser\UsageFormat();
+			$result = $parser->parse($argv, 1);
+			$traversalContext = new TraversalContext();
+			$traversalContext->workingPath =  realpath (getcwd());
+			
+			if (!$result())
+			{
+				if ($result->displayHelp())
+				{
+					echo ($info->usage($usage));
+					return (0);
+				}
+
+				foreach ($result->getMessages() as $m)
+				{
+					error_log(' - ' . $m . PHP_EOL);
+				}
+
+				$usage->format = Parser\UsageFormat::SHORT_TEXT;
+				error_log ($info->usage($usage));
+				return (1);
+			}
+
+			if ($result->displayHelp())
+			{
+				echo ($info->usage($usage));
+				return (0);
+			}
+
+			$outputDirectory = dirname($result->outputFile());
+			
+			$running = \Phar::running();
+			if (!is_dir($outputDirectory))
+			{
+				if (!mkdir($outputDirectory, 0777, true))
+				{
+					error_log ('Failed to create ' . $result->outputFile . PHP_EOL);
+					return (2);
+				}
 			}
 			
-			if ((($tokens[$i - 2][0] == T_CLASS) || ($tokens[$i - 2][0] == T_INTERFACE)) && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING)
+			$traversalContext->options = $result;
+			$traversalContext->classMap = new \ArrayObject();
+			foreach ($result as $path)
 			{
-				
-				$class_name = $tokens[$i][1];
-				if (strlen($context))
+				if (is_file($path))
 				{
-					$class_name = $context . '\\' . $class_name;
+					$path = realpath($path);
+					self::processTreeFile($traversalContext, $result->outputFile, dirname($path), $path);
 				}
-				
-				$classArray[$class_name] = $relativeToOutput;
+				elseif (is_dir($path))
+				{
+					self::processTree($traversalContext, $result->outputFile, realpath($path));
+				}
 			}
-		}
-	}
-	
-	$info = new \Program\createAutoloadFileProgramInfo();
-	$parser = new \Parser\Parser($info);
-	$usage = new \Parser\UsageFormat();
-	$result = $parser->parse($_SERVER['argv'], 1);
-	
-	if (!$result())
-	{
-		if ($result->displayHelp())
-		{
-			echo ($info->usage($usage));
-			exit(0);
-		}
-		
-		foreach ($result->getMessages() as $m)
-		{
-			echo (' - ' . $m . PHP_EOL);
-		}
-		
-		$usage->format = Parser\UsageFormat::SHORT_TEXT;
-		echo ($info->usage($usage));
-		exit(1);
-	}
-	
-	if ($result->displayHelp())
-	{
-		echo ($info->usage($usage));
-		exit(0);
-	}
-	
-	$outputDirectory = dirname($result->outputFile);
-	
-	if (!is_dir($outputDirectory) && !mkdir($outputDirectory, 0777, true))
-	{
-		echo ('Failed to create ' . $result->outputFile . PHP_EOL);
-		exit(2);
-	}
-	
-	$classArray = array ();
-	foreach ($result as $path)
-	{
-		echo $path . "\n";
-		if (is_file($path))
-		{
-			$path = realpath($path);
-			processTreeFile($classArray, $result->outputFile, dirname($path), $path);
-		}
-		elseif (is_dir($path))
-		{
-			processTree($classArray, $result->outputFile, realpath($path));
-		}
-	}
-	
-	$functionName = ($result->functionName->isSet) ? $result->functionName() : '';
-	if (!is_string($functionName) || (strlen($functionName) == 0))
-	{
-		$functionName = base64_encode(uniqid());
-		$functionName = 'autoload_' . substr($functionName, 0, strlen($functionName) - 2);
-	}
-	
-	$content = <<< EOF
+
+			$content = <<< EOF
 <?php
-function ${functionName}(\$className)
-{
+spl_autoload_register(function(\$className) {
 
 EOF;
-	
-	$includeExtensionPattern = $result->includeExtension();
-	if (is_string($includeExtensionPattern) && strlen($includeExtensionPattern))
-	{
-		$includeExtensionPattern = chr(1) . '.*' . str_replace('.', '\\.', $result->includeExtension()) . '$' . chr(1);
+			$first = true;
+			foreach ($traversalContext->classMap as $name => $file)
+			{
+				$prefix = ($first) ? "\t" : ' else';
+				$first = false;
+				$content .= <<< EOF
+${prefix}if (\$className == '$name') {
+		require_once(__DIR__ . '/$file');
 	}
-	else
-	{
-		$includeExtensionPattern = false;
-	}
-	$first = true;
-	foreach ($classArray as $name => $file)
-	{
-		$prefix = ($first) ? '' : 'else';
-		$method = ($includeExtensionPattern && preg_match($includeExtensionPattern, $file)) ? 'include_once' : 'require_once';
-		$first = false;
-		$content .= <<< EOF
-	${prefix}if (\$className == '$name')
-	{
-		$method(__DIR__ . '/$file');
-	}
- 
 EOF;
-	}
-	$content .= <<< EOF
-}
-spl_autoload_register('${functionName}');
+			} // foreach
+			$content .= <<< EOF
 
+});
 EOF;
-	
-	if ($result->outputFile->isSet)
-	{
-		file_put_contents($result->outputFile(), $content);
-	}
-	else
-	{
-		echo $content;
-	}
-}
+			if ($result->outputFile->isSet)
+			{
+				file_put_contents($result->outputFile(), $content);
+			}
+			else
+			{
+				echo $content;
+			}
+		} // main
+	} // Application class
+	exit(Application::main($_SERVER['argv']));
+} // namespace
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

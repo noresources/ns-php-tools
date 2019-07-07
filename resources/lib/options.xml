@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prg:options xmlns:prg="http://xsd.nore.fr/program" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<prg:argument id="ns-php-tools.option.phpBootstrapFile">
+		<prg:databinding>
+			<prg:variable>phpBootstrapFile</prg:variable>
+		</prg:databinding>
+		<prg:documentation>
+			<prg:abstract>PHP bootstrap file</prg:abstract>
+			<prg:details>A PHP file to load at the beginning of the application execution</prg:details>
+		</prg:documentation>
+		<prg:names>
+			<prg:long>bootstrap</prg:long>
+			<prg:long>autoload</prg:long>
+		</prg:names>
+		<prg:type>
+			<prg:path exist="true">
+				<prg:kinds>
+					<prg:file />
+				</prg:kinds>
+			</prg:path>
+		</prg:type>
+	</prg:argument>
+</prg:options>

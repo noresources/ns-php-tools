@@ -3,24 +3,6 @@
 namespace 
 {
 
-	class TraversalContext
-	{
-		/**
-		 * @var string
-		 */
-		public $workingPath;
-		
-		/**
-		 * @var \Parser\ProgramResult
-		 */
-		public $options;
-	
-		/**
-		 * @var \ArrayObject
-		 */
-		public $classMap;
-	}
-	
 	class Application
 	{
 
@@ -67,7 +49,7 @@ namespace
 			return implode('/', $result);
 		}
 
-		private static function processTree(TraversalContext $traversalContext, $outputFile, $treeRoot, $treeNode = null)
+		private static function processTree(&$classArray, $outputFile, $treeRoot, $treeNode = null)
 		{
 			if (!$treeNode)
 			{
@@ -84,33 +66,22 @@ namespace
 
 				$itemPath = $treeNode . '/' . $item;
 
+				echo ($itemPath . PHP_EOL);
 				if (is_dir($itemPath))
 				{
-					self::processTree($traversalContext, $outputFile, $treeRoot, $itemPath);
+					self::processTree($classArray, $outputFile, $treeRoot, $itemPath);
 				}
 				else if (is_file($itemPath))
 				{
-					self::processTreeFile($traversalContext, $outputFile, $treeRoot, $itemPath);
+					self::processTreeFile($classArray, $outputFile, $treeRoot, $itemPath);
 				}
 			}
 
 			closedir($iterator);
 		}
 
-		private static function processTreeFile(TraversalContext $traversalContext, $outputFile, $treeRoot, $treeFile)
+		private static function processTreeFile(&$classArray, $outputFile, $treeRoot, $treeFile)
 		{
-			if (mime_content_type ($treeFile) != 'text/x-php') 
-				return;
-			
-			$relativeToWorkingPath = self::getRelativePath($traversalContext->workingPath, $treeFile);
-			
-			foreach ($traversalContext->options->excludePatterns() as $pattern) 
-			{
-				if (preg_match ($pattern, $relativeToWorkingPath)) return;
-			}
-			
-			echo($relativeToWorkingPath . PHP_EOL);
-						
 			$outputDirectory = realpath(dirname($outputFile));
 			$relativeToOutput = self::getRelativePath($outputDirectory, $treeFile);
 
@@ -141,7 +112,7 @@ namespace
 						$class_name = $context . '\\' . $class_name;
 					}
 
-					$traversalContext->classMap->offsetSet($class_name, $relativeToOutput);
+					$classArray[$class_name] = $relativeToOutput;
 				}
 			}
 		}
@@ -152,9 +123,7 @@ namespace
 			$parser = new \Parser\Parser($info);
 			$usage = new \Parser\UsageFormat();
 			$result = $parser->parse($argv, 1);
-			$traversalContext = new TraversalContext();
-			$traversalContext->workingPath =  realpath (getcwd());
-			
+
 			if (!$result())
 			{
 				if ($result->displayHelp())
@@ -179,53 +148,50 @@ namespace
 				return (0);
 			}
 
-			$outputDirectory = dirname($result->outputFile());
-			
-			$running = \Phar::running();
-			if (!is_dir($outputDirectory))
+			$outputDirectory = dirname($result->outputFile);
+
+			if (!is_dir($outputDirectory) && !mkdir($outputDirectory, 0777, true))
 			{
-				if (!mkdir($outputDirectory, 0777, true))
-				{
-					error_log ('Failed to create ' . $result->outputFile . PHP_EOL);
-					return (2);
-				}
+				error_log ('Failed to create ' . $result->outputFile . PHP_EOL);
+				return (2);
 			}
-			
-			$traversalContext->options = $result;
-			$traversalContext->classMap = new \ArrayObject();
+
+			$classArray = array ();
 			foreach ($result as $path)
 			{
+				echo $path . "\n";
 				if (is_file($path))
 				{
 					$path = realpath($path);
-					self::processTreeFile($traversalContext, $result->outputFile, dirname($path), $path);
+					self::processTreeFile($classArray, $result->outputFile, dirname($path), $path);
 				}
 				elseif (is_dir($path))
 				{
-					self::processTree($traversalContext, $result->outputFile, realpath($path));
+					self::processTree($classArray, $result->outputFile, realpath($path));
 				}
 			}
 
 			$content = <<< EOF
 <?php
 spl_autoload_register(function(\$className) {
-
 EOF;
+
 			$first = true;
-			foreach ($traversalContext->classMap as $name => $file)
+			foreach ($classArray as $name => $file)
 			{
-				$prefix = ($first) ? "\t" : ' else';
+				$prefix = ($first) ? '' : 'else';
 				$first = false;
 				$content .= <<< EOF
-${prefix}if (\$className == '$name') {
+	${prefix}if (\$className == '$name')
+	{
 		require_once(__DIR__ . '/$file');
 	}
 EOF;
 			} // foreach
 			$content .= <<< EOF
-
 });
 EOF;
+
 			if ($result->outputFile->isSet)
 			{
 				file_put_contents($result->outputFile(), $content);

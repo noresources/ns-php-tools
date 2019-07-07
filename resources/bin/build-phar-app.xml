@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prg:program version="2.0" xmlns:prg="http://xsd.nore.fr/program" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<prg:name>build-phar-app</prg:name>
+	<prg:author>Renaud Guillard</prg:author>
+	<prg:version>1.0.0</prg:version>
+	<prg:license />
+	<prg:copyright>Copyright © 2018 Renaud Guillard</prg:copyright>
+	<prg:documentation>
+		<prg:abstract>Create PHP Phar command line tools</prg:abstract>
+		<prg:details>Build a Phar archive of a PHP tool which use ns-xml program interface definition.</prg:details>
+	</prg:documentation>
+
+	<prg:options>
+		<prg:group>
+			<prg:documentation>
+				<prg:abstract>Input</prg:abstract>
+			</prg:documentation>
+			<prg:options>
+				<!-- Input -->
+				<!-- program interface XML definition file -->
+				<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/apps/options.xml"
+					xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:argument[@id = 'nsxml.option.requiredXmlProgramDescriptionPath'])" />
+
+				<prg:argument required="true">
+					<prg:databinding>
+						<prg:variable>programFilePath</prg:variable>
+					</prg:databinding>
+					<prg:documentation>
+						<prg:abstract>PHP program file path</prg:abstract>
+					</prg:documentation>
+					<prg:names>
+						<prg:long>application</prg:long>
+						<prg:short>a</prg:short>
+					</prg:names>
+					<prg:type>
+						<prg:path exist="true">
+							<prg:kinds>
+								<prg:file />
+							</prg:kinds>
+						</prg:path>
+					</prg:type>
+				</prg:argument>
+
+
+				<prg:argument>
+					<prg:databinding>
+						<prg:variable>embeddedResourceListFile</prg:variable>
+					</prg:databinding>
+					<prg:documentation>
+						<prg:abstract>Embedded resource file list</prg:abstract>
+						<prg:details>JSON file describing a list of file and folder to embed into the Phar archive</prg:details>
+					</prg:documentation>
+					<prg:names>
+						<prg:long>embed</prg:long>
+						<prg:short>E</prg:short>
+					</prg:names>
+				</prg:argument>
+				<prg:multiargument>
+					<prg:databinding>
+						<prg:variable>embeddedResources</prg:variable>
+					</prg:databinding>
+					<prg:documentation>
+						<prg:abstract>Embedded resources</prg:abstract>
+						<prg:details>
+							List of key-value pair separated by a "=" (equal) where
+							<prg:block>
+								* key is path of the file to embed
+							</prg:block>
+							<prg:block>
+								* value is the path local name in the archive
+							</prg:block>
+						</prg:details>
+					</prg:documentation>
+					<prg:names>
+						<prg:short>e</prg:short>
+					</prg:names>
+				</prg:multiargument>
+
+				<!-- Skip validation -->
+				<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/apps/options.xml"
+					xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:switch[@id = 'nsxml.option.skipValidation'])" />
+			</prg:options>
+		</prg:group>
+
+		<prg:group>
+			<prg:documentation>
+				<prg:abstract>Generation options</prg:abstract>
+			</prg:documentation>
+			<prg:options>
+				<prg:switch>
+					<prg:databinding><prg:variable>compressFiles</prg:variable></prg:databinding>
+					<prg:documentation><prg:abstract>Compress files</prg:abstract></prg:documentation>
+					<prg:names>
+						<prg:long>compress</prg:long>
+						<prg:short>c</prg:short>
+					</prg:names>
+				</prg:switch>
+				
+				<!-- Parser namespace -->
+				<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/apps/build-php.xml"
+					xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(/prg:program/prg:options//prg:argument[@id = 'build-php.option.parserNamespace'])" />
+
+				<!-- Program info namespace -->
+				<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/apps/build-php.xml"
+					xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(/prg:program/prg:options//prg:argument[@id = 'build-php.option.programNamespace'])" />
+			</prg:options>
+		</prg:group>
+
+		<prg:group>
+			<prg:documentation>
+				<prg:abstract>Output options</prg:abstract>
+			</prg:documentation>
+			<prg:options>
+				<!-- Output file -->
+				<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/apps/build-php.xml"
+					xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(/prg:program/prg:options//prg:argument[@id = 'build-php.option.outputScriptFilePath'])" />
+				<prg:argument>
+					<prg:databinding>
+						<prg:variable>chmod</prg:variable>
+					</prg:databinding>
+					<prg:default>0755</prg:default>
+					<prg:documentation>
+						<prg:abstract>File permission</prg:abstract>
+					</prg:documentation>
+					<prg:names>
+						<prg:long>chmod</prg:long>
+					</prg:names>
+					<prg:type>
+						<prg:string />
+					</prg:type>
+				</prg:argument>
+			</prg:options>
+		</prg:group>
+
+		<!-- ns-xml path -->
+		<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/apps/options.xml"
+			xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:group[@id = 'nsxml.option.nsxmlPathGroup'])" />
+		<!-- PHP bootstrap file -->
+		<xi:include href="../lib/options.xml" xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:argument[@id = 'ns-php-tools.option.phpBootstrapFile'])" />
+		<!-- Help -->
+		<xi:include href="../../vendor/noresources/ns-xml/ns/xsh//lib/options/options.xml"
+			xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:switch[@id = 'prg.option.displayHelp'])" />
+		<xi:include href="../../vendor/noresources/ns-xml/ns/xsh//lib/options/options.xml"
+			xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:switch[@id = 'prg.option.verbose'])" />
+	</prg:options>
+
+</prg:program>
