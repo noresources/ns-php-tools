@@ -3,6 +3,8 @@
 namespace 
 {
 
+	use NoreSources\PathUtil;
+	
 	class TraversalContext
 	{
 		/**
@@ -179,14 +181,20 @@ namespace
 				return (0);
 			}
 
-			$outputDirectory = dirname($result->outputFile());
-			
 			$running = \Phar::running();
+			
+			$outputDirectory = dirname($result->outputFile());
+			if (!PathUtil::isAbsolute($outputDirectory))
+			{
+				// Workaround Phar habits tu catch relative paths
+				$outputDirectory = $traversalContext->workingPath . '/' . $outputDirectory;
+			}
+			
 			if (!is_dir($outputDirectory))
 			{
 				if (!mkdir($outputDirectory, 0777, true))
 				{
-					error_log ('Failed to create ' . $result->outputFile . PHP_EOL);
+					error_log ('Failed to create directory ' . $outputDirectory . PHP_EOL);
 					return (2);
 				}
 			}

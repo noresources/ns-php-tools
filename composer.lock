@@ -13,7 +13,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-php-core",
-                "reference": "aabd422cb54f68757ab17e26af68f3ccd4309de1"
+                "reference": "c27729bd9155d7c39bec74e3bcb42fc23170adbb"
             },
             "require": {
                 "php": ">= 5.3"
@@ -29,7 +29,7 @@
             },
             "scripts": {
                 "tests": [
-                    "@php  ./vendor/bin/phpunit --bootstrap core.autoload.inc.php tests"
+                    "@php  ./vendor/bin/phpunit --bootstrap autoload.php tests"
                 ]
             },
             "license": [
@@ -46,7 +46,7 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-php-core/issues"
             },
-            "time": "2019-07-07T22:21:59+00:00"
+            "time": "2019-07-08T19:54:44+00:00"
         },
         {
             "name": "noresources/ns-php-xslt",
