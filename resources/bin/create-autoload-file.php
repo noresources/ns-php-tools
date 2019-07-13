@@ -26,49 +26,6 @@ namespace
 	class Application
 	{
 
-		private static function pathCleanup($path)
-		{
-			$path = str_replace('\\', '/', $path);
-			$path = preg_replace(chr(1) . '/[^/]+/\.\.(/|$)' . chr(1), '\1', $path);
-			$path = preg_replace(chr(1) . '/\.(/|$)' . chr(1), '\1', $path);
-			return $path;
-		}
-
-		private static function getRelativePath($from, $to)
-		{
-			$from = trim(self::pathCleanup($from), '/');
-			$to = trim(self::pathCleanup($to), '/');
-
-			$from = explode('/', $from);
-			$to = explode('/', $to);
-			$fromCount = count($from);
-			$toCount = count($to);
-			$min = ($fromCount < $toCount) ? $fromCount : $toCount;
-			$commonPartsCount = 0;
-			$result = array ();
-			while (($commonPartsCount < $min) && ($from[$commonPartsCount] == $to[$commonPartsCount]))
-			{
-				$commonPartsCount++;
-			}
-
-			for ($i = $commonPartsCount; $i < $fromCount; $i++)
-			{
-				$result[] = '..';
-			}
-
-			for ($i = $commonPartsCount; $i < $toCount; $i++)
-			{
-				$result[] = $to[$i];
-			}
-
-			if (count($result) == 0)
-			{
-				return '.';
-			}
-
-			return implode('/', $result);
-		}
-
 		private static function processTree(TraversalContext $traversalContext, $outputFile, $treeRoot, $treeNode = null)
 		{
 			if (!$treeNode)
@@ -104,7 +61,7 @@ namespace
 			if (mime_content_type ($treeFile) != 'text/x-php') 
 				return;
 			
-			$relativeToWorkingPath = self::getRelativePath($traversalContext->workingPath, $treeFile);
+			$relativeToWorkingPath = PathUtil::getRelative($traversalContext->workingPath, $treeFile);
 			
 			foreach ($traversalContext->options->excludePatterns() as $pattern) 
 			{
@@ -114,7 +71,7 @@ namespace
 			echo($relativeToWorkingPath . PHP_EOL);
 						
 			$outputDirectory = realpath(dirname($outputFile));
-			$relativeToOutput = self::getRelativePath($outputDirectory, $treeFile);
+			$relativeToOutput = PathUtil::getRelative($outputDirectory, $treeFile);
 
 			$tokens = token_get_all(file_get_contents($treeFile));
 			$count = count($tokens);
@@ -203,6 +160,11 @@ namespace
 			$traversalContext->classMap = new \ArrayObject();
 			foreach ($result as $path)
 			{
+				if (!PathUtil::isAbsolute($path))
+				{
+					$path = $traversalContext->workingPath . '/' . $path;
+				}
+				
 				if (is_file($path))
 				{
 					$path = realpath($path);

@@ -1890,7 +1890,7 @@ class ProgramResult extends RootItemResult implements \Iterator
 	
 	/**
 	 * Indicates if the command line argument parsing completes successfully (without any errors)
-	 * @return boolean
+	 * @param ProgramResult $result
 	 * @return boolean
 	 */
 	public static function success (ProgramResult $result)

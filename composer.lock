@@ -13,7 +13,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-php-core",
-                "reference": "c27729bd9155d7c39bec74e3bcb42fc23170adbb"
+                "reference": "bab47e60385396c748737c0c6a30a494af0c3141"
             },
             "require": {
                 "php": ">= 5.3"
@@ -46,7 +46,7 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-php-core/issues"
             },
-            "time": "2019-07-08T19:54:44+00:00"
+            "time": "2019-08-31T15:36:37+00:00"
         },
         {
             "name": "noresources/ns-php-xslt",
@@ -89,11 +89,11 @@
         },
         {
             "name": "noresources/ns-xml",
-            "version": "dev-ns-php-tools",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-xml",
-                "reference": "79d61919e63a13c26d60be5fecc447e9e19fab3e"
+                "reference": "bb79b999d0ea2fd0157f8fef77252cdfabfa0408"
             },
             "require": {
                 "php": ">= 5.3"
@@ -129,7 +129,7 @@
             },
             "scripts": {
                 "post-update-cmd": [
-                    "@php tools/php/amalgamation.php"
+                    "@php tools/php/update-bundled-files.php"
                 ]
             },
             "license": [
@@ -147,7 +147,7 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-xml/issues"
             },
-            "time": "2019-07-07T22:23:30+00:00"
+            "time": "2019-08-10T13:24:33+00:00"
         }
     ],
     "aliases": [],
