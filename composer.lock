@@ -13,7 +13,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-php-core",
-                "reference": "bab47e60385396c748737c0c6a30a494af0c3141"
+                "reference": "ff175efc74bc473da69a4ab147175e186833a18f"
             },
             "require": {
                 "php": ">= 5.3"
@@ -46,7 +46,7 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-php-core/issues"
             },
-            "time": "2019-08-31T15:36:37+00:00"
+            "time": "2019-09-07T12:52:10+00:00"
         },
         {
             "name": "noresources/ns-php-xslt",
