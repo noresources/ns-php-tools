@@ -4,25 +4,26 @@ namespace
 {
 
 	use NoreSources\PathUtil;
-	
+
 	class TraversalContext
 	{
+
 		/**
 		 * @var string
 		 */
 		public $workingPath;
-		
+
 		/**
 		 * @var \Parser\ProgramResult
 		 */
 		public $options;
-	
+
 		/**
 		 * @var \ArrayObject
 		 */
 		public $classMap;
 	}
-	
+
 	class Application
 	{
 
@@ -179,21 +180,24 @@ namespace
 			$content = <<< EOF
 <?php
 spl_autoload_register(function(\$className) {
+	\$className = strtolower (\$className);
+	\$classMap = array (
 
 EOF;
 			$first = true;
-			foreach ($traversalContext->classMap as $name => $file)
-			{
-				$prefix = ($first) ? "\t" : ' else';
+			foreach ($traversalContext->classMap as $name => $file) {
+				if (!$first) $content .= ',' . PHP_EOL;
+				$content .= "\t\t'" . strtolower($name) . "' => '".$file."'";
 				$first = false;
-				$content .= <<< EOF
-${prefix}if (\$className == '$name') {
-		require_once(__DIR__ . '/$file');
-	}
-EOF;
-			} // foreach
+			}
+			$content .= PHP_EOL;
+			
 			$content .= <<< EOF
+	); // classMap
 
+	if (\array_key_exists (\$className, \$classMap)) {
+		require_once(__DIR__ . '/' . \$classMap[\$className]);
+	}
 });
 EOF;
 			if ($result->outputFile->isSet)

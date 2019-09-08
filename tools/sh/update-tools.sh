@@ -63,6 +63,8 @@ do
 		
 	[ -f "${xml%xml}json" ] && buildPharOptions=("${buildPharOptions[@]}" -E "${xml%xml}json")
 	
+	rm -f "${output}"
+	
 	"${buildPhar}" \
 		"${buildPharOptions[@]}"
 done << EOF
@@ -98,6 +100,8 @@ then
 		buildPharOptions=("${buildPharOptions[@]}" --compress-files)
 		
 		[ -f "${xml%xml}json" ] && buildPharOptions=("${buildPharOptions[@]}" -E "${xml%xml}json")
+		
+		rm -f "${output}"
 		
 		"${buildPhar}" \
 			"${buildPharOptions[@]}"
