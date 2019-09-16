@@ -8,7 +8,10 @@
 	<prg:documentation>
 		<prg:details>Create a PHP file containing a
 			spl_autoload_register that loads PHP classes
-			defined in a given directory tree
+			defined in a given directory tree.
+			<prg:endl/>
+			When using this script as a PHP file, the --autoload option is required to load 
+			ns-php-core library.
 		</prg:details>
 	</prg:documentation>
 	<prg:options>
@@ -61,6 +64,9 @@
 				<prg:string />
 			</prg:type>
 		</prg:multiargument>
+
+		<!-- PHP bootstrap file -->
+		<xi:include href="../lib/options.xml" xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:argument[@id = 'ns-php-tools.option.phpBootstrapFile'])" />
 
 		<!-- Help -->
 		<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/lib/options/options.xml"

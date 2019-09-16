@@ -3015,7 +3015,7 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 	{
 		parent::__construct("create-autoload-file");
 		
-		$this->details = 'Create a PHP file containing a spl_autoload_register that loads PHP classes defined in a given directory tree';
+		$this->details = 'Create a PHP file containing a spl_autoload_register that loads PHP classes defined in a given directory tree.' . PHP_EOL . 'When using this script as a PHP file, the --autoload option is required to load ns-php-core library.';
 		
 		// prg:argument outputFile
 		$G_1_output = new \Parser\ArgumentOptionInfo("outputFile", array('output', 'o'), (0 | \Parser\ItemInfo::REQUIRED));
@@ -3034,11 +3034,21 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 		$G_2_exclude->details = 'Any directory or file matching one of these patterns will be excluded from processing.' . PHP_EOL . 'Input paths are evaluated relative to the working directory';
 		$this->appendOption($G_2_exclude);
 		
-		// prg:switch displayHelp
-		$G_3_help = new \Parser\SwitchOptionInfo("displayHelp", array('help'), (0));
+		// prg:argument phpBootstrapFile
+		$G_3_bootstrap = new \Parser\ArgumentOptionInfo("phpBootstrapFile", array('bootstrap', 'autoload'), (0));
+		$G_3_bootstrap->argumentType = \Parser\ArgumentType::PATH;
 		
-		$G_3_help->abstract = 'Display program usage';
-		$this->appendOption($G_3_help);
+		$G_3_bootstrap->abstract = 'PHP bootstrap file';
+		
+		$G_3_bootstrap->details = 'A PHP file to load at the beginning of the application execution';
+		$G_3_bootstrap->validators[] = new \Parser\PathValueValidator(0 | \Parser\PathValueValidator::EXISTS | \Parser\PathValueValidator::TYPE_FILE);
+		$this->appendOption($G_3_bootstrap);
+		
+		// prg:switch displayHelp
+		$G_4_help = new \Parser\SwitchOptionInfo("displayHelp", array('help'), (0));
+		
+		$G_4_help->abstract = 'Display program usage';
+		$this->appendOption($G_4_help);
 		$G_1_ = $this->appendPositionalArgument( new \Parser\PositionalArgumentInfo(-1, \Parser\ArgumentType::PATH, (0)));
 		$G_1_->validators[] = new \Parser\PathValueValidator(0 | \Parser\PathValueValidator::EXISTS | \Parser\PathValueValidator::TYPE_FILE | \Parser\PathValueValidator::TYPE_FOLDER);
 		
@@ -3189,6 +3199,12 @@ namespace
 			{
 				echo ($info->usage($usage));
 				return (0);
+			}
+			
+			if ($result->phpBootstrapFile->isSet)
+			{
+				$f = $result->phpBootstrapFile();
+				$loader = require ($f);
 			}
 
 			$running = \Phar::running();

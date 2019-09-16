@@ -138,6 +138,12 @@ namespace
 				echo ($info->usage($usage));
 				return (0);
 			}
+			
+			if ($result->phpBootstrapFile->isSet)
+			{
+				$f = $result->phpBootstrapFile();
+				$loader = require ($f);
+			}
 
 			$running = \Phar::running();
 			
