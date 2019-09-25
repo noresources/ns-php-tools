@@ -1,5 +1,3 @@
 * text=auto
-* text eol=crlf
 *.sh text eol=lf
-/bin/* text eol=lf
-/resources/bin/*.php text eol=crlf
+*.php text eol=lf
