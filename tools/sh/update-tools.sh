@@ -58,7 +58,6 @@ do
 		-o "${output}" \
 	)
 	
-	#buildPharOptions=("${buildPharOptions[@]}" --verbose)
 	buildPharOptions=("${buildPharOptions[@]}" --compress-files)
 		
 	[ -f "${xml%xml}json" ] && buildPharOptions=("${buildPharOptions[@]}" -E "${xml%xml}json")
@@ -96,7 +95,6 @@ then
 			-o "${output}" \
 		)
 		
-		#buildPharOptions=("${buildPharOptions[@]}" --verbose)
 		buildPharOptions=("${buildPharOptions[@]}" --compress-files)
 		
 		[ -f "${xml%xml}json" ] && buildPharOptions=("${buildPharOptions[@]}" -E "${xml%xml}json")

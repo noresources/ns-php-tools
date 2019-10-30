@@ -3166,7 +3166,6 @@ class buildPharAppProgramInfo extends \Parser\ProgramInfo
 }// namespace Program
 ?>
 <?php
-
 namespace NoreSources\Tools
 {
 
@@ -3188,36 +3187,42 @@ namespace NoreSources\Tools
 
 		/**
 		 * Result of the command line option parsing
+		 *
 		 * @var \Parser\ProgramResult
 		 */
 		public $options;
 
 		/**
 		 * Program interface definition of the target application
+		 *
 		 * @var \DOMDocument
 		 */
 		public $programDocument;
 
 		/**
 		 * Metadata of the target application
+		 *
 		 * @var \ArrayObject
 		 */
 		public $metadata;
 
 		/**
 		 * List of all embedded PHP files
+		 *
 		 * @var \ArrayObject
 		 */
 		public $sourceFiles;
 
 		/**
 		 * filesystem path -> localname
+		 *
 		 * @var \ArrayObject
 		 */
 		public $files;
 
 		/**
 		 * Phar archive of the target application
+		 *
 		 * @var \Phar
 		 */
 		public $archive;
@@ -3233,25 +3238,28 @@ namespace NoreSources\Tools
 
 	class Application
 	{
+
 		const XML_NAMESPACE_PROGRAM = 'http://xsd.nore.fr/program';
+
 		const XML_NAMESPACE_XSD = 'http://www.w3.org/2001/XMLSchema';
+
 		const XML_NAMESPACE_XSLT = 'http://www.w3.org/1999/XSL/Transform';
 
 		public static function prerequisite()
 		{
 			$errorCount = 0;
 			$readOnly = ini_get('phar.readonly');
-			if (intval ($readOnly))
+			if (intval($readOnly))
 			{
 				$errorCount++;
 				error_log('PHP setting phar.readonly must be set to Off');
 			}
-			
-			foreach (array (
-					'dom',
-					'xsl',
-					'libxml',
-					'phar'
+
+			foreach (array(
+				'dom',
+				'xsl',
+				'libxml',
+				'phar'
 			) as $extension)
 			{
 				if (!extension_loaded($extension))
@@ -3261,9 +3269,9 @@ namespace NoreSources\Tools
 				}
 			}
 
-			foreach (array (
-					'NoreSources\PathUtil',
-					'NoreSources\XSLT\Stylesheet'
+			foreach (array(
+				'NoreSources\PathUtil',
+				'NoreSources\XSLT\Stylesheet'
 			) as $className)
 			{
 				if (class_exists($className) === false)
@@ -3342,21 +3350,24 @@ namespace NoreSources\Tools
 			$context->programDocument->load($context->options->xmlProgramDescriptionPath());
 			$context->programDocument->xinclude();
 
-			$context->metadata['version'] = $context->programDocument->documentElement->getAttributeNode('version')->value;
+			$context->metadata['version'] = $context->programDocument->documentElement->getAttributeNode(
+				'version')->value;
 
-			foreach (array (
-					'author',
-					'copyright',
-					'license'
+			foreach (array(
+				'author',
+				'copyright',
+				'license'
 			) as $attribute)
 			{
 				if ($context->programDocument->documentElement->hasAttribute($attribute))
-					$context->metadata[$attribute] = $context->programDocument->documentElement->getAttribute($attribute)->value;
+					$context->metadata[$attribute] = $context->programDocument->documentElement->getAttribute(
+						$attribute)->value;
 			}
 
 			if (!$context->options->skipValidation->isSet)
 			{
-				$schemaFile = $context->options->nsxmlPath() . '/xsd/program/' . $context->metadata['version'] . '/program.xsd';
+				$schemaFile = $context->options->nsxmlPath() . '/xsd/program/' .
+					$context->metadata['version'] . '/program.xsd';
 				if (!file_exists($schemaFile))
 				{
 					error_log('XSD schema not found (' . $schemaFile . ').');
@@ -3391,7 +3402,7 @@ namespace NoreSources\Tools
 
 		private function buildPhar(ApplicationContext $context)
 		{
-			$xsltOptions = array ();
+			$xsltOptions = array();
 			if ($context->options->parserNamespace->isSet)
 				$xsltOptions['prg.php.parser.namespace'] = $context->options->parserNamespace();
 
@@ -3402,12 +3413,15 @@ namespace NoreSources\Tools
 
 			$applicationContent = file_get_contents($context->options->programFilePath);
 
-			$context->archive = new \Phar($context->options->outputScriptFilePath, \FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::KEY_AS_FILENAME, $applicationAlias);
+			$context->archive = new \Phar($context->options->outputScriptFilePath,
+				\FilesystemIterator::CURRENT_AS_FILEINFO | \FilesystemIterator::KEY_AS_FILENAME,
+				$applicationAlias);
 
 			if ($context->options->embeddedResourceListFile->isSet)
 			{
 				$directory = dirname($context->options->embeddedResourceListFile());
-				$json = json_decode(file_get_contents($context->options->embeddedResourceListFile()), true);
+				$json = json_decode(
+					file_get_contents($context->options->embeddedResourceListFile()), true);
 				if (!\is_array($json))
 				{
 					error_log('Invalid embedded resources description file.');
@@ -3471,15 +3485,17 @@ namespace NoreSources\Tools
 				}
 			}
 
-			$files = array (
-					'parser' => array (
-							'xsl' => $context->options->nsxmlPath() . '/xsl/program/' . $context->metadata['version'] . '/php/parser.xsl',
-							'localname' => '__parser.php'
-					),
-					'info' => array (
-							'xsl' => $context->options->nsxmlPath() . '/xsl/program/' . $context->metadata['version'] . '/php/programinfo.xsl',
-							'localname' => '__programinfo.php'
-					)
+			$files = array(
+				'parser' => array(
+					'xsl' => $context->options->nsxmlPath() . '/xsl/program/' .
+					$context->metadata['version'] . '/php/parser.xsl',
+					'localname' => '__parser.php'
+				),
+				'info' => array(
+					'xsl' => $context->options->nsxmlPath() . '/xsl/program/' .
+					$context->metadata['version'] . '/php/programinfo.xsl',
+					'localname' => '__programinfo.php'
+				)
 			);
 
 			$applicationLoader = '<?php' . PHP_EOL;
@@ -3507,13 +3523,15 @@ namespace NoreSources\Tools
 					$xslt->setParameter('', $n, $v);
 				}
 
-				$context->archive->addFromString($value['localname'], $xslt->transformToXml($context->programDocument));
+				$context->archive->addFromString($value['localname'],
+					$xslt->transformToXml($context->programDocument));
 				$context->sourceFiles->append($value['localname']);
 			}
 
 			foreach ($context->sourceFiles as $localname)
 			{
-				$applicationLoader .= 'require("phar://' . $applicationAlias . '/' . $localname . '");' . PHP_EOL;
+				$applicationLoader .= 'require("phar://' . $applicationAlias . '/' . $localname .
+					'");' . PHP_EOL;
 			}
 
 			$applicationLoader .= '} // namespace' . PHP_EOL;
@@ -3535,29 +3553,37 @@ namespace NoreSources\Tools
 
 			$context->archive->setMetadata($context->metadata);
 
-			$context->archive->setStub('#!/usr/bin/env php' . "\n" . $context->archive->createDefaultStub('index.php'));
+			$context->archive->setStub(
+				'#!/usr/bin/env php' . "\n" . $context->archive->createDefaultStub('index.php'));
 
 			return true;
 		}
 
-		private static function addFile(ApplicationContext $context, $path, $localName, $mimeType = false)
+		private static function addFile(ApplicationContext $context, $path, $localName,
+			$mimeType = false)
 		{
 			$context->files->offsetSet($path, $localName);
 			if (preg_match(chr(1) . '.*?/xml' . chr(1), $mimeType))
 			{
 				self::addXmlFile($context, $path, $localName);
 			}
+			elseif ($mimeType == 'text/x-php')
+			{
+				self::addSourceFile($context, $path, $localName);
+			}
 			else
 			{
-				if ($mimeType == 'text/x-php')
-				{
-					$context->sourceFiles->append($localName);
-				}
-				
 				$context->archive->addFile($path, $localName);
 			}
-			
+
 			return 'phar://' . $context->archive->getAlias() . '/' . $localName;
+		}
+
+		private static function addSourceFile(ApplicationContext $context, $path, $localName)
+		{
+			$content = str_replace("\r", "\n", str_replace("\r\n", "\n", file_get_contents($path)));
+			$context->sourceFiles->append($localName);
+			$context->archive->addFromString($localName, $content);
 		}
 
 		private static function addXmlFile(ApplicationContext $context, $path, $localName)
@@ -3594,8 +3620,10 @@ namespace NoreSources\Tools
 							}
 							else
 							{
-								$localLocationName = base64_encode(uniqid(basename($location), true));
-								$uri = self::addFile($context, $location, $localLocationName, 'text/xml');
+								$localLocationName = base64_encode(
+									uniqid(basename($location), true));
+								$uri = self::addFile($context, $location, $localLocationName,
+									'text/xml');
 								$node->setAttribute('schemaLocation', $uri);
 							}
 						}
@@ -3662,6 +3690,7 @@ namespace NoreSources\Tools
 		}
 
 		/**
+		 *
 		 * @var ApplicationContext
 		 */
 		private $context;

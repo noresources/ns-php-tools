@@ -3061,8 +3061,7 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 }// namespace Program
 ?>
 <?php
-
-namespace 
+namespace
 {
 
 	use NoreSources\PathUtil;
@@ -3071,16 +3070,19 @@ namespace
 	{
 
 		/**
+		 *
 		 * @var string
 		 */
 		public $workingPath;
 
 		/**
+		 *
 		 * @var \Parser\ProgramResult
 		 */
 		public $options;
 
 		/**
+		 *
 		 * @var \ArrayObject
 		 */
 		public $classMap;
@@ -3089,7 +3091,8 @@ namespace
 	class Application
 	{
 
-		private static function processTree(TraversalContext $traversalContext, $outputFile, $treeRoot, $treeNode = null)
+		private static function processTree(TraversalContext $traversalContext, $outputFile,
+			$treeRoot, $treeNode = null)
 		{
 			if (!$treeNode)
 			{
@@ -3110,29 +3113,32 @@ namespace
 				{
 					self::processTree($traversalContext, $outputFile, $treeRoot, $itemPath);
 				}
-				else if (is_file($itemPath))
-				{
-					self::processTreeFile($traversalContext, $outputFile, $treeRoot, $itemPath);
-				}
+				else
+					if (is_file($itemPath))
+					{
+						self::processTreeFile($traversalContext, $outputFile, $treeRoot, $itemPath);
+					}
 			}
 
 			closedir($iterator);
 		}
 
-		private static function processTreeFile(TraversalContext $traversalContext, $outputFile, $treeRoot, $treeFile)
+		private static function processTreeFile(TraversalContext $traversalContext, $outputFile,
+			$treeRoot, $treeFile)
 		{
-			if (mime_content_type ($treeFile) != 'text/x-php') 
+			if (mime_content_type($treeFile) != 'text/x-php')
 				return;
-			
+
 			$relativeToWorkingPath = PathUtil::getRelative($traversalContext->workingPath, $treeFile);
-			
-			foreach ($traversalContext->options->excludePatterns() as $pattern) 
+
+			foreach ($traversalContext->options->excludePatterns() as $pattern)
 			{
-				if (preg_match ($pattern, $relativeToWorkingPath)) return;
+				if (preg_match($pattern, $relativeToWorkingPath))
+					return;
 			}
-			
-			echo($relativeToWorkingPath . PHP_EOL);
-						
+
+			echo ($relativeToWorkingPath . PHP_EOL);
+
 			$outputDirectory = realpath(dirname($outputFile));
 			$relativeToOutput = PathUtil::getRelative($outputDirectory, $treeFile);
 
@@ -3141,7 +3147,8 @@ namespace
 			$context = "";
 			for ($i = 2; $i < $count; $i++)
 			{
-				if ($tokens[$i - 2][0] == T_NAMESPACE && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING)
+				if ($tokens[$i - 2][0] == T_NAMESPACE && $tokens[$i - 1][0] == T_WHITESPACE &&
+					$tokens[$i][0] == T_STRING)
 				{
 					$context = $tokens[$i][1];
 					$i += 2;
@@ -3154,9 +3161,10 @@ namespace
 					continue;
 				}
 
-				if ((($tokens[$i - 2][0] == T_CLASS) || ($tokens[$i - 2][0] == T_INTERFACE)) && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING)
+				if ((($tokens[$i - 2][0] == T_CLASS) || ($tokens[$i - 2][0] == T_INTERFACE) ||
+					($tokens[$i - 2][0] == T_TRAIT)) && $tokens[$i - 1][0] == T_WHITESPACE &&
+					$tokens[$i][0] == T_STRING)
 				{
-
 					$class_name = $tokens[$i][1];
 					if (strlen($context))
 					{
@@ -3175,8 +3183,8 @@ namespace
 			$usage = new \Parser\UsageFormat();
 			$result = $parser->parse($argv, 1);
 			$traversalContext = new TraversalContext();
-			$traversalContext->workingPath =  realpath (getcwd());
-			
+			$traversalContext->workingPath = realpath(getcwd());
+
 			if (!$result())
 			{
 				if ($result->displayHelp())
@@ -3191,7 +3199,7 @@ namespace
 				}
 
 				$usage->format = Parser\UsageFormat::SHORT_TEXT;
-				error_log ($info->usage($usage));
+				error_log($info->usage($usage));
 				return (1);
 			}
 
@@ -3200,7 +3208,7 @@ namespace
 				echo ($info->usage($usage));
 				return (0);
 			}
-			
+
 			if ($result->phpBootstrapFile->isSet)
 			{
 				$f = $result->phpBootstrapFile();
@@ -3208,23 +3216,23 @@ namespace
 			}
 
 			$running = \Phar::running();
-			
+
 			$outputDirectory = dirname($result->outputFile());
 			if (!PathUtil::isAbsolute($outputDirectory))
 			{
 				// Workaround Phar habits tu catch relative paths
 				$outputDirectory = $traversalContext->workingPath . '/' . $outputDirectory;
 			}
-			
+
 			if (!is_dir($outputDirectory))
 			{
 				if (!mkdir($outputDirectory, 0777, true))
 				{
-					error_log ('Failed to create directory ' . $outputDirectory . PHP_EOL);
+					error_log('Failed to create directory ' . $outputDirectory . PHP_EOL);
 					return (2);
 				}
 			}
-			
+
 			$traversalContext->options = $result;
 			$traversalContext->classMap = new \ArrayObject();
 			foreach ($result as $path)
@@ -3233,11 +3241,12 @@ namespace
 				{
 					$path = $traversalContext->workingPath . '/' . $path;
 				}
-				
+
 				if (is_file($path))
 				{
 					$path = realpath($path);
-					self::processTreeFile($traversalContext, $result->outputFile, dirname($path), $path);
+					self::processTreeFile($traversalContext, $result->outputFile, dirname($path),
+						$path);
 				}
 				elseif (is_dir($path))
 				{
@@ -3253,13 +3262,15 @@ spl_autoload_register(function(\$className) {
 
 EOF;
 			$first = true;
-			foreach ($traversalContext->classMap as $name => $file) {
-				if (!$first) $content .= ',' . PHP_EOL;
-				$content .= "\t\t'" . strtolower($name) . "' => '".$file."'";
+			foreach ($traversalContext->classMap as $name => $file)
+			{
+				if (!$first)
+					$content .= ',' . PHP_EOL;
+				$content .= "\t\t'" . strtolower($name) . "' => '" . $file . "'";
 				$first = false;
 			}
 			$content .= PHP_EOL;
-			
+
 			$content .= <<< EOF
 	); // classMap
 
@@ -3280,18 +3291,3 @@ EOF;
 	} // Application class
 	exit(Application::main($_SERVER['argv']));
 } // namespace
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
