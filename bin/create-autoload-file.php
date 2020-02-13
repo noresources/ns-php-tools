@@ -3064,7 +3064,7 @@ class createAutoloadFileProgramInfo extends \Parser\ProgramInfo
 namespace
 {
 
-	use NoreSources\PathUtil;
+	use NoreSources\Path;
 
 	class TraversalContext
 	{
@@ -3126,10 +3126,11 @@ namespace
 		private static function processTreeFile(TraversalContext $traversalContext, $outputFile,
 			$treeRoot, $treeFile)
 		{
-			if (mime_content_type($treeFile) != 'text/x-php')
+			if ((\pathinfo ($treeFile, PATHINFO_EXTENSION) != 'php') 
+				&& mime_content_type ($treeFile) != 'text/x-php') 
 				return;
 
-			$relativeToWorkingPath = PathUtil::getRelative($traversalContext->workingPath, $treeFile);
+			$relativeToWorkingPath = Path::getRelative($traversalContext->workingPath, $treeFile);
 
 			foreach ($traversalContext->options->excludePatterns() as $pattern)
 			{
@@ -3140,7 +3141,7 @@ namespace
 			echo ($relativeToWorkingPath . PHP_EOL);
 
 			$outputDirectory = realpath(dirname($outputFile));
-			$relativeToOutput = PathUtil::getRelative($outputDirectory, $treeFile);
+			$relativeToOutput = Path::getRelative($outputDirectory, $treeFile);
 
 			$tokens = token_get_all(file_get_contents($treeFile));
 			$count = count($tokens);
@@ -3218,7 +3219,7 @@ namespace
 			$running = \Phar::running();
 
 			$outputDirectory = dirname($result->outputFile());
-			if (!PathUtil::isAbsolute($outputDirectory))
+			if (!Path::isAbsolute($outputDirectory))
 			{
 				// Workaround Phar habits tu catch relative paths
 				$outputDirectory = $traversalContext->workingPath . '/' . $outputDirectory;
@@ -3237,7 +3238,7 @@ namespace
 			$traversalContext->classMap = new \ArrayObject();
 			foreach ($result as $path)
 			{
-				if (!PathUtil::isAbsolute($path))
+				if (!Path::isAbsolute($path))
 				{
 					$path = $traversalContext->workingPath . '/' . $path;
 				}

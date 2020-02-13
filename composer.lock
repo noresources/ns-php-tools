@@ -9,27 +9,42 @@
     "packages-dev": [
         {
             "name": "noresources/ns-php-core",
-            "version": "2.0.x-dev",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-php-core",
-                "reference": "ff175efc74bc473da69a4ab147175e186833a18f"
+                "reference": "0a68470a6a3dce2ca38e20e96b38a9805b9a3718"
             },
             "require": {
-                "php": ">= 5.3"
+                "ext-json": "*",
+                "php": ">= 5.5",
+                "psr/container": "^1.0",
+                "psr/log": "^1.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8"
+                "phpunit/phpunit": "~8.0"
+            },
+            "suggest": {
+                "ext-yaml": "Needed to load DataTree content from YAML encoded file"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-1.0.x": "1.0.x-dev",
+                    "dev-1.1.x": "1.1.x-dev",
+                    "dev-master": "2.1.x-dev",
+                    "dev-2.0.x": "2.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "NoreSources\\": "./"
+                    "NoreSources\\": "src/",
+                    "NoreSources\\Test\\": "tests/src/"
                 }
             },
             "scripts": {
                 "tests": [
-                    "@php  ./vendor/bin/phpunit --bootstrap autoload.php tests"
+                    "@php  ./vendor/bin/phpunit --color=never --bootstrap vendor/autoload.php tests"
                 ]
             },
             "license": [
@@ -43,18 +58,21 @@
                 }
             ],
             "description": "Utility class library for PHP",
+            "keywords": [
+                "Utility"
+            ],
             "support": {
                 "issues": "https://github.com/noresources/ns-php-core/issues"
             },
-            "time": "2019-09-07T12:52:10+00:00"
+            "time": "2020-02-10T19:24:12+00:00"
         },
         {
             "name": "noresources/ns-php-xslt",
             "version": "2.0.x-dev",
             "source": {
                 "type": "git",
-                "url": "https://github.com/noresources/ns-php-xslt",
-                "reference": "8a82b7a67f2fcdaf4cfd72dbdaf9aec8f25d8686"
+                "url": "ssh://okami/volume1/repository/git/ns-php-xslt.git",
+                "reference": "4d9ddd9cceade95a45be2a613c65c70dad65adb0"
             },
             "require": {
                 "ext-dom": "*",
@@ -66,9 +84,14 @@
                 "phpunit/phpunit": "^4.8"
             },
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "NoreSources\\XSLT\\": "./"
+                    "NoreSources\\XSLT\\": "src/"
                 }
             },
             "license": [
@@ -85,7 +108,7 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-php-xslt/issues"
             },
-            "time": "2019-07-07T22:21:11+00:00"
+            "time": "2020-01-02T19:46:44+00:00"
         },
         {
             "name": "noresources/ns-xml",
@@ -93,7 +116,7 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/noresources/ns-xml",
-                "reference": "bb79b999d0ea2fd0157f8fef77252cdfabfa0408"
+                "reference": "b8e53126a4401a69613e8cd2398bc563cb011be6"
             },
             "require": {
                 "php": ">= 5.3"
@@ -147,7 +170,103 @@
             "support": {
                 "issues": "https://github.com/noresources/ns-xml/issues"
             },
-            "time": "2019-08-10T13:24:33+00:00"
+            "time": "2019-10-05T16:56:30+00:00"
+        },
+        {
+            "name": "psr/container",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/container.git",
+                "reference": "fc1bc363ecf887921e3897c7b1dad3587ae154eb"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/container/zipball/fc1bc363ecf887921e3897c7b1dad3587ae154eb",
+                "reference": "fc1bc363ecf887921e3897c7b1dad3587ae154eb",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Container\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common Container Interface (PHP FIG PSR-11)",
+            "homepage": "https://github.com/php-fig/container",
+            "keywords": [
+                "PSR-11",
+                "container",
+                "container-interface",
+                "container-interop",
+                "psr"
+            ],
+            "time": "2019-10-04T14:07:35+00:00"
+        },
+        {
+            "name": "psr/log",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "5628725d0e4d687e29575eb41f9d5ee7de33a84c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/5628725d0e4d687e29575eb41f9d5ee7de33a84c",
+                "reference": "5628725d0e4d687e29575eb41f9d5ee7de33a84c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2019-11-12T16:45:05+00:00"
         }
     ],
     "aliases": [],

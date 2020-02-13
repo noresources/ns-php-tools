@@ -1,6 +1,6 @@
 [
 	{
-		"source": "../../vendor/noresources/ns-php-core/PathUtil.php",
-		"target": "ns-php-core/PathUtil.php"
+		"source": "../../vendor/noresources/ns-php-core/src/Path.php",
+		"target": "ns-php-core/Path.php"
 	}
 ]

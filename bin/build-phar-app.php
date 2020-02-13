@@ -3270,7 +3270,7 @@ namespace NoreSources\Tools
 			}
 
 			foreach (array(
-				'NoreSources\PathUtil',
+				'NoreSources\Path',
 				'NoreSources\XSLT\Stylesheet'
 			) as $className)
 			{
