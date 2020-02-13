@@ -64,7 +64,8 @@ namespace
 		private static function processTreeFile(TraversalContext $traversalContext, $outputFile,
 			$treeRoot, $treeFile)
 		{
-			if (mime_content_type($treeFile) != 'text/x-php')
+			if ((\pathinfo ($treeFile, PATHINFO_EXTENSION) != 'php') 
+				&& mime_content_type ($treeFile) != 'text/x-php') 
 				return;
 
 			$relativeToWorkingPath = PathUtil::getRelative($traversalContext->workingPath, $treeFile);
