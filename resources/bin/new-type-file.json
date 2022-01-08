@@ -1,0 +1,6 @@
+[
+	{
+		"source": "../../vendor/noresources/ns-php-core/src/Container.php",
+		"target": "ns-php-core/Container.php"
+	}
+]

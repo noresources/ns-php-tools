@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<prg:program version="2.0" xmlns:prg="http://xsd.nore.fr/program" xmlns:xml="http://www.w3.org/XML/1998/namespace" xmlns:xi="http://www.w3.org/2001/XInclude">
+	<prg:name>new-type-file</prg:name>
+	<prg:author>Renaud Guillard</prg:author>
+	<prg:version>2.0.0</prg:version>
+	<prg:license />
+	<prg:copyright>Copyright © 2014-2019 Renaud Guillard</prg:copyright>
+	<prg:options>
+		
+		<!-- PHP bootstrap file -->
+		<xi:include href="../lib/options.xml" xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:argument[@id = 'ns-php-tools.option.phpBootstrapFile'])" />
+
+		<!-- Help -->
+		<xi:include href="../../vendor/noresources/ns-xml/ns/xsh/lib/options/options.xml"
+			xpointer="xmlns(prg=http://xsd.nore.fr/program) xpointer(//prg:switch[@id = 'prg.option.displayHelp'])" />
+
+	</prg:options>
+	<prg:values>
+			<prg:value>
+				<prg:documentation><prg:abstract>type name</prg:abstract></prg:documentation>
+			</prg:value>
+	</prg:values>
+</prg:program>
