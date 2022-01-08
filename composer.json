@@ -30,7 +30,8 @@
 		"php": ">= 5.4",
 		"ext-dom": "*",
 		"ext-xml": "*",
-		"ext-xsl": "*"
+		"ext-xsl": "*",
+		"nette/php-generator": "^3.4@dev"
 	},
 	"require-dev": {
 		"noresources/ns-xml": "*",
