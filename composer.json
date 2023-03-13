@@ -1,47 +1,53 @@
 {
-	"name": "noresources/ns-php-tools",
-	"description": "Command line tools written in PHP",
-	"type": "project",
-	"version": "1.0.0",
-	"license": "MIT",
+	"name": "noresources/ns-php-tools", 
+	"description": "Command line tools written in PHP", 
+	"type": "project", 
+	"version": "1.0.0", 
+	"license": "MIT", 
 	"authors": [
 		{
-			"name": "Renaud Guillard",
-			"email": "dev@nore.fr",
+			"name": "Renaud Guillard", 
+			"email": "dev@nore.fr", 
 			"role": "lead"
 		}
-	],
+	], 
 	"repositories": [
 		{
-			"type": "git",
+			"type": "git", 
 			"url": "https://github.com/noresources/ns-xml"
-		},
+		}, 
 		{
-			"type": "git",
+			"type": "git", 
 			"url": "https://github.com/noresources/ns-php-xslt"
-		},
+		}, 
 		{
-			"type": "git",
+			"type": "git", 
 			"url": "https://github.com/noresources/ns-php-core"
 		}
-	],
-	"prefer-stable": false,
+	], 
+	"prefer-stable": false, 
 	"require": {
-		"php": ">= 5.4",
-		"ext-dom": "*",
-		"ext-xml": "*",
-		"ext-xsl": "*",
+		"php": ">= 5.4", 
+		"ext-dom": "*", 
+		"ext-xml": "*", 
+		"ext-xsl": "*", 
 		"nette/php-generator": "^3.4@dev"
-	},
+	}, 
 	"require-dev": {
-		"noresources/ns-xml": "*",
+		"noresources/ns-xml": "*", 
 		"noresources/ns-php-xslt": "^2.0"
-	},
-	"minimum-stability": "dev",
-	"bin": [
-		"bin/create-autoload-file.php"
-	],
+	}, 
+	"minimum-stability": "dev", 
 	"support": {
 		"issues": "https://github.com/noresources/ns-php-tools/issues"
-	}
+	}, 
+	"extra": {
+		"branch-alias": {
+			"dev-master": "0.1.x-dev"
+		}
+	}, 
+	"bin": [
+		"bin/build-phar-app.php", 
+		"bin/new-type-file.php"
+	]
 }
