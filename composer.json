@@ -31,13 +31,11 @@
 		"ext-dom": "*", 
 		"ext-xml": "*", 
 		"ext-xsl": "*", 
-		"nette/php-generator": "^3.4@dev"
+		"nette/php-generator": ">= 3.4"
 	}, 
 	"require-dev": {
-		"noresources/ns-xml": "*", 
-		"noresources/ns-php-xslt": "^2.0"
+		"noresources/ns-xml": "*"
 	}, 
-	"minimum-stability": "dev", 
 	"support": {
 		"issues": "https://github.com/noresources/ns-php-tools/issues"
 	}, 

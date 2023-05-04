@@ -124,10 +124,14 @@ namespace
 					$namespaceName = \implode ('\\', $namespaceParts);
 					break;
 				}
-				if ($namespaceName) break;
+				if ($namespaceName) {
+					$namespaceName = \rtrim ($namespaceName, '\\');
+					break;
+				}
 			}
 
 			echo ("Namespace: " . ($namespaceName ? $namespaceName : 'N/A') . PHP_EOL);
+			echo ('Target file' . $typeFilePath . PHP_EOL);
 			
 			$typeName = \basename($typeName);
 			$typeType = 'Class';
