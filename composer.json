@@ -31,7 +31,8 @@
 		"ext-dom": "*", 
 		"ext-xml": "*", 
 		"ext-xsl": "*", 
-		"nette/php-generator": ">= 3.4"
+		"nette/php-generator": ">= 3.4",
+		"noresources/ns-php-core": "^2.7"
 	}, 
 	"require-dev": {
 		"noresources/ns-xml": "*"

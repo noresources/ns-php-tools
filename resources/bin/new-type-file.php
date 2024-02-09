@@ -1,11 +1,13 @@
 <?php
-namespace 
+namespace
 {
+
 	use Nette\PhpGenerator\PhpFile;
 	use NoreSources\Container\Container;
 
 	class Application
 	{
+
 		public static function main($argv)
 		{
 			$info = new \Program\newTypeFileProgramInfo();
@@ -89,50 +91,64 @@ namespace
 			if (!($composerFilePath instanceof \SplFileInfo))
 				throw new \Exception('No composer file');
 
-			echo ('Composer project directory: ' . dirname ($composerFilePath) . PHP_EOL);
-				
+			echo ('Composer project directory: ' .
+				dirname($composerFilePath) . PHP_EOL);
+
 			$composer = \json_decode(
 				\file_get_contents($composerFilePath->getRealPath()),
 				true);
-			
+
 			$namespaceName = null;
-			foreach (['autoload', 'autoload-dev'] as $key) 
+			foreach ([
+				'autoload',
+				'autoload-dev'
+			] as $key)
 			{
 				$autoload = Container::keyValue($composer, $key, []);
-				if (!Container::keyExists($autoload, 'psr-4')) continue;
+				if (!Container::keyExists($autoload, 'psr-4'))
+					continue;
 				foreach ($autoload['psr-4'] as $n => $p)
 				{
 					$path = $composerRootPath . '/' . $p;
-					$part = \rtrim ($path, '/');
+					$part = \rtrim($path, '/');
 					$part = \substr(\strval($typeFilePath), 0,
 						\strlen($path));
 
 					// var_dump (['path' => $path, 'part' => $part]);
-					
-					if ($part != $path) continue;
-					
-					$n = \rtrim($n, '\\');
-					$namespaceParts = [];
-					if (!empty ($n)) 
-						$namespaceParts[] = $n;
+
+					if ($part != $path)
+						continue;
+
+					$namespaceParts = \array_filter(\explode("\\", $n),
+						function ($p) {
+							return !empty($p);
+						});
+
 					$sub = \dirname(
-						\substr(\strval($typeFilePath),
-							\strlen($part)));
-					if (!empty($sub) && $sub != '.')
-						$namespaceParts[] = \str_replace('/', '\\', $sub);
-					
-					$namespaceName = \implode ('\\', $namespaceParts);
+						\substr(\strval($typeFilePath), \strlen($part)));
+
+					$subParts = \array_filter(\explode('/', $sub),
+						function ($p) {
+							return !empty($p) && (\strpos($p, '.') !== 0);
+						});
+
+					$namespaceParts = \array_merge($namespaceParts,
+						$subParts);
+
+					$namespaceName = \implode('\\', $namespaceParts);
 					break;
 				}
-				if ($namespaceName) {
-					$namespaceName = \rtrim ($namespaceName, '\\');
+				if ($namespaceName)
+				{
+					$namespaceName = \rtrim($namespaceName, '\\');
 					break;
 				}
 			}
 
-			echo ("Namespace: " . ($namespaceName ? $namespaceName : 'N/A') . PHP_EOL);
+			echo ("Namespace: " .
+				($namespaceName ? $namespaceName : 'N/A') . PHP_EOL);
 			echo ('Target file' . $typeFilePath . PHP_EOL);
-			
+
 			$typeName = \basename($typeName);
 			$typeType = 'Class';
 			if (\preg_match('/.+Interface$/', $typeName))
@@ -142,10 +158,10 @@ namespace
 
 			$headerFilename = 'resources/templates/file-header.txt';
 			$header = '';
-									foreach ([
-										$composerRootPath
-									] as $path)
-									{
+			foreach ([
+				$composerRootPath
+			] as $path)
+			{
 				$headerFilePath = $path . '/' . $headerFilename;
 				if (\file_exists($headerFilePath))
 					$header = \file_get_contents($headerFilePath);
@@ -157,11 +173,11 @@ namespace
 			$ns = $typeFile;
 			if ($namespaceName)
 				$ns = $typeFile->addNamespace($namespaceName);
-										
-										$type = \call_user_func([
-											$ns,
-											'add' . $typeType
-										], $typeName);
+
+			$type = \call_user_func([
+				$ns,
+				'add' . $typeType
+			], $typeName);
 
 			\file_put_contents(\strval($typeFilePath),
 				\strval($typeFile));
